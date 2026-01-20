@@ -1,29 +1,35 @@
 <template>
     <div>
         <div class="container">
-            <tags v-if="$site.features.includes('tags') && status.tags == 'done'" :tags="tags"/>
-            <placeholder v-else component="tags" classes="mb-3"/>
+            <!-- <tags v-if="$site.features.includes('tags') && status.tags == 'done'" :tags="tags"/> -->
+            <!-- <placeholder v-else component="tags" classes="mb-3"/>
             <popular-comics/>
             <latest-updates/>
-            <discover-comics/>
+            <discover-comics/> -->
+            <welcome/>
+            <tags v-if="$site.features.includes('tags') && status.tags == 'done'" :tags="tags"/>
+            <placeholder v-else component="tags" classes="mb-3"/>
+
         </div>
     </div>
 </template>
 
 <script>
+    import Welcome from '../components/homepage/Welcome';
     import Tags from '../components/homepage/Tags';
-    import DiscoverComics from '../components/homepage/DiscoverComics';
-    import LatestUpdates from '../components/homepage/LatestUpdates';
-    import PopularComics from '../components/homepage/PopularComics';
-    import AdSpot from '../components/AdSpot';
+    // import DiscoverComics from '../components/homepage/DiscoverComics';
+    // import LatestUpdates from '../components/homepage/LatestUpdates';
+    // import PopularComics from '../components/homepage/PopularComics';
+    // import AdSpot from '../components/AdSpot';
 
     export default {
         components: {
-            AdSpot,
+            Welcome,
+            // AdSpot,
             Tags,
-            DiscoverComics,
-            LatestUpdates,
-            PopularComics
+            // DiscoverComics,
+            // LatestUpdates,
+            // PopularComics
         },
         data() {
             return {

@@ -6,7 +6,7 @@
             <h6 class="card-subtitle mb-2 text-muted">{{ subtitle || $t('auth.register_text') }}</h6>
         </div>
         <div class="card-body">
-            <form @keyup.enter="submitting ? null : verify()">
+            <form @keyup.enter="submitting ? null : register()">
                 <alert v-show="alert.show" :type="alert.type" :content="alert.content"></alert>
                 <div class="form-group mb-3 input-group">
                     <div class="input-group-prepend"><span class="input-group-text"><user-icon/></span></div>
@@ -20,17 +20,15 @@
                     <div class="input-group-prepend"><span class="input-group-text"><lock-icon/></span></div>
                     <input type="password" v-model="password" :placeholder="$t('auth.password')" class="form-control">
                 </div>
-                <vue-recaptcha ref="captcha" @verify="register" @expired="expired" size="invisible" :sitekey="$app.captcha"></vue-recaptcha>
                 <div class="text-center">
-                    <button type="button" class="btn mt-4 btn-primary btn-lg btn-block" @click.prevent="verify" :disabled="submitting || registered"><span class="spinner-border spinner-border-sm align-baseline" v-if="submitting"></span><template v-else>{{ $t('auth.register') }}</template></button>
+                    <button type="button" class="btn mt-4 btn-primary btn-lg btn-block" @click.prevent="register" :disabled="submitting || registered"><span class="spinner-border spinner-border-sm align-baseline" v-if="submitting"></span><template v-else>{{ $t('auth.register') }}</template></button>
                 </div>
             </form>
         </div>
     </div>
 </template>
-<script>
-    import VueRecaptcha from 'vue-recaptcha';
 
+<script>
     export default {
         props: {
             modal: {
@@ -41,9 +39,6 @@
                 type: String,
                 default: null
             }
-        },
-        components: {
-            VueRecaptcha
         },
         data() {
             return {
@@ -59,25 +54,13 @@
                 registered: false
             }
         },
-        mounted() {
-            let recaptchaScript = document.createElement('script')
-            recaptchaScript.setAttribute('src', 'https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit')
-            document.head.appendChild(recaptchaScript)
-        },
         methods: {
-            verify() {
+            register() {
                 this.submitting = true;
-                this.$refs.captcha.execute();
-            },
-            expired() {
-                this.handle_response('Captcha expired', this.alert, true);
-            },
-            register(captcha) {
                 this.$store.dispatch("register", {
                     username: this.username,
                     email: this.email,
                     password: this.password,
-                    captcha: captcha
                 }).then(response => {
                     this.$ga.event('users', 'registered');
                     this.handle_response(response, this.alert, false);
@@ -86,7 +69,6 @@
                 }).catch(error => {
                     this.handle_response(error.response, this.alert, true);
                     this.submitting = false;
-                    this.$refs.captcha.reset();
                 });
             },
             openModal(component) {
@@ -100,3 +82,4 @@
         }
     }
 </script>
+

@@ -1,9 +1,8 @@
 {
-    "id": "Manga-Web",
-    "name": "Manga-Web",
-    "letter": "n",
+    "id": "eroxhentai",
+    "name": "EroxHentai",
+    "letter": "E",
     "features": [
-        "logo",
         "artists",
         "tags",
         "groups",
@@ -15,7 +14,6 @@
         "dmca"
     ],
     "social": [
-        "https://github.com/redaEnnakouri/Manga-Web",
-        "https://github.com/redaEnnakouri/Manga-Web
+        "https://eroxhentai.com"
     ]
 }

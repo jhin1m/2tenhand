@@ -20,7 +20,7 @@ class ScraperConfig extends Command
     public function handle()
     {
         $this->comment("IP details:");
-        echo $this->scraper->getIP();
+        echo $this->scraper->getIP() . PHP_EOL;
         $this->comment("User agent details:");
         echo $this->scraper->getUA();
     }

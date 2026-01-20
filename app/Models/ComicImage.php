@@ -23,12 +23,21 @@ class ComicImage extends Model
 
     public function getSourceUrlAttribute()
     {
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
         return Storage::disk(getstoragedisk())->url("storage/images/{$this->comic_id}".($this->chapter ? '/'.$this->chapter->slug : '')."/{$this->image}");
     }
 
     public function getThumbnailUrlAttribute()
     {
-        return Storage::disk(getstoragedisk())->url("storage/thumbnails/{$this->comic_id}".($this->chapter ? '/'.$this->chapter->slug : '')."/{$this->image}");
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+        return Storage::disk(getstoragedisk())->url("storage/images/{$this->comic_id}".($this->chapter ? '/'.$this->chapter->slug : '')."/{$this->image}");
+
+        //CHANGE: "thumbnails" to "images" to optimize image storage
+        //TODO: optimize image storage
     }
 
     public function comic()

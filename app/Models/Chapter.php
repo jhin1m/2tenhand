@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
 use Carbon\Carbon;
 
 class Chapter extends Model
@@ -30,11 +32,11 @@ class Chapter extends Model
 
     protected static function booted()
     {
-        static::deleting(function ($comic) {
+        static::deleting(function ($chapter) {
             Storage::disk(getstoragedisk())->deleteDirectory("storage/images/{$chapter->comic->id}/{$chapter->id}");
             Storage::disk(getstoragedisk())->deleteDirectory("storage/thumbnails/{$chapter->comic->id}/{$chapter->id}");
         });
-    }
+    }    
 
     public function getNameAttribute($value)
     {

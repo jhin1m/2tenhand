@@ -9,10 +9,19 @@ class Nhentai extends Scraper
 {
     public function getPageCount($tries = 3)
     {
-        $crawler = $this->client->request('GET', 'http://mangaweb.local/');
+        $crawler = $this->client->request('GET', 'https://nhentai.net/language/japanese', [
+            'proxy' => $this->proxy,
+            'verify' => false,
+            'headers' => [
+                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                'Accept-Encoding' => 'gzip, deflate, br, zstd',
+            ],
+        ]);
+        
         if (!$crawler->filter('.pagination > a.last')->count()) {
             if (!$tries) return false;
-            logger('The "'.$this->proxy.'" proxy fails - got response code '.@$this->client->getInternalResponse()->getStatus());
+            logger('The "'.$this->proxy.'" proxy fails - got response code '.@$this->client->getInternalResponse()->getStatusCode());
             $this->setCrawler();
             return $this->getPageCount($tries - 1);
         }
@@ -22,9 +31,9 @@ class Nhentai extends Scraper
 
     public function getComics($page)
     {
-        $crawler = $this->client->request('GET', 'http://mangaweb.local/?page='.$page);
+        $crawler = $this->client->request('GET', 'https://nhentai.net/language/japanese/?page='.$page);
         $comics = [];
-        $crawler->filter('#content > .container > .gallery')->each(function ($node) use (&$comics) {
+        $crawler->filter('.container > .gallery')->each(function ($node) use (&$comics) {
             $comics[] = [
                 'link' => $node->children('a')->link()->getUri(),
                 'title' => $node->filter('.caption')->text()
@@ -39,9 +48,14 @@ class Nhentai extends Scraper
         $comic = [];
         $comic['linkcode'] = filter_var($link, FILTER_SANITIZE_NUMBER_INT) ?? null;
         $comic['cover'] = $crawler->filter('#cover img')->attr('data-src');
-        $comic['title'] = $crawler->filter('#info > h1')->text();
-        $alt = $crawler->filter('#info > h2');
-        $comic['alternative_title'] = ($alt->count() ? $alt->text() : null);
+        $title = $crawler->filter('#info > h2');
+        if ($title->count() && trim($title->text()) !== '') {
+            $comic['title'] = $title->text();
+            $comic['alternative_title'] = null;
+        } else {
+            $comic['title'] = $crawler->filter('#info > h1')->text();
+            $comic['alternative_title'] = null;
+        }
         $comic['slug'] = $this->slug($comic['title']);
         $parodies = [];
         $crawler->filter('#tags .tag-container')->eq(0)->filter('.tags > a')->each(function ($node) use (&$parodies) {
@@ -80,6 +94,12 @@ class Nhentai extends Scraper
                 $comic['language'] = $language;
             }
         });
+
+        $comic['language'] = [
+            'name' => 'Japanese',
+            'slug' => 'japanese'
+        ];
+
         $categories = $crawler->filter('#tags .tag-container')->eq(6)->filter('.tags > a');
         if ($categories->count()) {
             $comic['category'] = $this->processTag($categories->first());
@@ -93,11 +113,13 @@ class Nhentai extends Scraper
         $images = [];
         $crawler->filter('#thumbnail-container .thumb-container')->each(function ($node) use (&$images) {
             $url = $node->filter('.gallerythumb > img')->attr('data-src');
+            $parsedUrl = parse_url($url);
+            $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . '/';
             $gallery = Str::afterLast(Str::beforeLast($url, '/'), '/');
             $ext = pathinfo($url, PATHINFO_EXTENSION);
             $page = Str::before(Str::afterLast($url, '/'), 't.');
-            $image['source'] = "http://mangaweb.local/galleries/{$gallery}/{$page}.{$ext}";
-            $image['thumbnail'] = "http://mangaweb.local/galleries/{$gallery}/{$page}t.{$ext}";
+            $image['source'] = "{$baseUrl}galleries/{$gallery}/{$page}.{$ext}";
+            $image['thumbnail'] = $url;
             $images[] = $image;
         });
         $comic['images'] = $images;

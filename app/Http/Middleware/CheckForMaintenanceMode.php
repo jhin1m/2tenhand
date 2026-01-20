@@ -22,7 +22,7 @@ class CheckForMaintenanceMode extends Middleware
             if ($this->inExceptArray($request)) {
                 return $next($request);
             }
-            return redirect()->away('http://hentaihand.com');
+            return redirect()->away('http://google.com');
         }
         return $next($request);
     }

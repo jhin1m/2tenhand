@@ -17,18 +17,18 @@ class AuthController extends Controller
 {
     public function protected_register(Request $request)
     {
-        $request->validate([
-            'captcha' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $recaptcha = new \ReCaptcha\ReCaptcha(config('site.captcha.secret'));
-                    $check = $recaptcha->verify($value);
-                    if (!$check->isSuccess()) {
-                        $fail(__('auth.captcha'));
-                    }
-                },
-            ],
-        ]);
+        // $request->validate([
+        //     'captcha' => [
+        //         'required',
+        //         function ($attribute, $value, $fail) {
+        //             $recaptcha = new \ReCaptcha\ReCaptcha(config('site.captcha.secret'));
+        //             $check = $recaptcha->verify($value);
+        //             if (!$check->isSuccess()) {
+        //                 $fail(__('auth.captcha'));
+        //             }
+        //         },
+        //     ],
+        // ]);
 
         return $this->register($request);
     }

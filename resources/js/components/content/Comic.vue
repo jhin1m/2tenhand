@@ -1,7 +1,7 @@
 <template>
     <router-link :to="{ name: 'comic', params: { slug: comic.slug } }">
         <div class="comic box clearfix d-flex flex-column h-100" :class="{'no-hover': noHover, lighter, editable: user.role === 'admin', premium: comic.premium }">
-            <div class="image" :style="'background-image: url(' + comic.thumb_url + ');'" role="img" :aria-label="`${comic.title} cover`"></div>
+            <div class="image" :style="'background-image: url(' + comic.thumb_url + ');'" role="img" :aria-label="`${comic.title} cover`" :alt="comic.title"></div>
             <comic-details :comic="comic" :tags="tags"/>
             <comic-details class="hover-drawer" :comic="comic" :tags="tags"/>
             <div v-if="user.role === 'admin'" class="edit">

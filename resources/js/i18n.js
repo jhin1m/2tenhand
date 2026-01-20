@@ -2,19 +2,25 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import api from './api';
 import en from './translations/en.json';
+import ja from './translations/ja.json';  // Import Japanese translations
 
 Vue.use(VueI18n);
+
+// Get default locale from server-side config, fallback to 'en'
+const defaultLocale = (typeof app !== 'undefined' && app.locale) ? app.locale : 'en';
+
 export const i18n = new VueI18n({
-    locale: 'en',
+    locale: defaultLocale,
     fallbackLocale: 'en',
     messages: {
         en,
+        ja,  // Add Japanese messages
     },
 });
 
 export const availableLanguages = app.languages;
 
-export const loadedLanguages = ['en'];
+export const loadedLanguages = [defaultLocale];  // Start with configured locale loaded
 
 function setI18nLanguage(lang) {
     i18n.locale = lang;

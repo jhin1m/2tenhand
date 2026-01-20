@@ -82,7 +82,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -112,6 +112,10 @@ return [
         'fr' => [
             'icon' => "/images/flags/fr.svg",
             'name' => "French"
+        ],
+        'ja' => [
+            'icon' => "/images/flags/jp.svg",
+            'name' => "Japanese"
         ]
     ],
 

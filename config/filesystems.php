@@ -107,4 +107,12 @@ return [
             'visibility' => 'public'
         ],
     ],
+
+    'bunnycdn' => [
+        'access_key' => env('BUNNY_CDN_ACCESS_KEY'),
+        'storage_zone' => env('BUNNY_CDN_STORAGE_ZONE'),
+        'region' => env('BUNNY_CDN_REGION'),
+        'url' => env('BUNNY_CDN_URL'),
+    ],
+
 ];

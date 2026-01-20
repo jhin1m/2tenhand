@@ -55,14 +55,14 @@ class Scraper
 
     public function getIP()
     {
-        $crawler = $this->client->request('GET', 'http://requestbin.net/ip');
-        return $crawler->getBody();
-    }
+        $response = $this->client->getClient()->request('GET', 'https://api.ipify.org');
+        return $response->getBody()->getContents();
+    }    
 
     public function getUA()
     {
-        $crawler = $this->client->request('GET', 'https://www.whatismybrowser.com/detect/what-is-my-user-agent');
-        return $crawler->filter('#detected_value a')->text();
+        $crawler = $this->client->request('GET', 'https://dnschecker.org/user-agent-info.php');
+        return $crawler->filter('p.user_agent_info')->text();
     }
 
     public function slug($name) {

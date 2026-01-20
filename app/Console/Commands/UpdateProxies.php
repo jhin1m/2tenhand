@@ -13,7 +13,7 @@ class UpdateProxies extends Command
     public function handle()
     {
         $this->line("\nUpdating proxies");
-        $csv = file_get_contents('https://blazingseollc.com/proxy/dashboard/api/export/4/all/raween.silva1@gmail.com/aLpwG0WS/list.csv');
+        $csv = file_get_contents('https://rayobyte.com/proxy/dashboard/api/export/4/all/raween.silva1@gmail.com/aLpwG0WS/list.csv');
         $proxies = preg_split('/\r\n|\r|\n/', $csv);
         if (!$proxies) return;
         $proxies = array_map(function ($proxy) {

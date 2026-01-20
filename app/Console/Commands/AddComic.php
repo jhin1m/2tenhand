@@ -23,7 +23,9 @@ use App\Models\Chapter;
 use App\Models\Parody;
 use App\Models\Relationship;
 use App\Scrapers\Scraper;
-
+use GuzzleHttp\Client;
+use GuzzleHttp\Promise\Promise;
+use GuzzleHttp\Promise\Utils;
 class AddComic extends Command
 {
     protected $signature = 'comic:add {link}';
@@ -32,6 +34,7 @@ class AddComic extends Command
 
     public $comic;
     private $relationships;
+    private $maxConcurrent = 100;
 
     public function handle(Scraper $scraper)
     {
@@ -280,39 +283,48 @@ class AddComic extends Command
 
     public function processImages($images, $folder)
     {
-        $queue = [];
-        $count = count($images);
-        $this->line("Downloading $count images...");
-        $progress = $this->output->createProgressBar($count);
-        $progress->start();
-        $page = 1;
-        $processed = array_filter(array_map(function ($image) use ($folder, $progress, &$queue, &$page) {
-            $progress->advance();
-            $downloaded = $this->downloadImage($image['source'], $page, "images/$folder", $image['context'] ?? null);
-            if (!$downloaded) return null;
-            if (isset($image['thumbnail'])) {
-                $this->downloadImage($image['thumbnail'], $page, "thumbnails/$folder", $image['context'] ?? null);
-            } else {
-                $queue["storage/images/$folder/$downloaded"] = "storage/thumbnails/$folder/$downloaded";
-            }
-            return [
-                'page' => $page++,
-                'image' => $downloaded
+        $processed = [];
+        $totalImages = count($images);
+        $this->alert("Bắt đầu gửi {$totalImages} ảnh qua API upload...");
+    
+        // Tạo danh sách ảnh với cấu trúc cho API
+        $imageData = [];
+        foreach ($images as $index => $image) {
+            $ext = pathinfo($image['source'], PATHINFO_EXTENSION);
+            $remotePath = "comics/$folder/image_" . ($index + 1) . ".$ext"; // Đặt tên cho ảnh tải lên trên server từ xa
+    
+            $imageData[] = [
+                'url' => $image['source'],
+                'remotePath' => $remotePath
             ];
-        }, $images));
-        $progress->finish();
-
-        $count = count($queue);
-        if ($count) {
-            $this->line("\nOptimizing $count images...");
-            $progress = $this->output->createProgressBar($count);
-            $progress->start();
-            foreach ($queue as $source => $dest) {
-                optimize($source, $dest, 300, 200);
-                $progress->advance();
-            }
-            $progress->finish();
         }
+    
+        // Gửi yêu cầu POST đến API upload
+        $client = new Client();
+        $response = $client->post('https://api.spoilerplus.asia/api.php', [
+            'headers' => [
+                'Content-Type' => 'application/json'
+            ],
+            'json' => [
+                'images' => $imageData
+            ]
+        ]);
+    
+        // Xử lý phản hồi từ API
+        $responseBody = json_decode($response->getBody()->getContents(), true);
+        if (isset($responseBody['success']) && $responseBody['success']) {
+            foreach ($responseBody['urls'] as $key => $url) {
+                $processed[] = [
+                    'page' => $key + 1,
+                    'image' => "https://h.spoilerplus.asia/comics/$folder/" . basename($url),
+                    'thumbnail' => "https://h.spoilerplus.asia/comics/$folder/" . basename($url)
+                ];
+            }
+            $this->info("Tải lên thành công " . count($responseBody['urls']) . " ảnh.");
+        } else {
+            $this->error("Lỗi khi tải lên ảnh. API không thành công.");
+        }
+    
         return $processed;
     }
 

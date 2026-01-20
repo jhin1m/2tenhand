@@ -154,11 +154,11 @@
                                 </p>
                             </div>
                         </div>
-                        <div v-if="!$app.is_mobile || $site.id === 'hentaihand'">
+                        <div v-if="!$app.is_mobile || $site.id === 'eroxhentai'">
                             <div v-if="canRead && status.chapters === 'loading' && status.images === 'loading'" class="box mb-4 text-center py-5 w-100"><div class="spinner-border"></div></div>
                             <comic-premium v-else-if="!canRead"/>
                             <comic-chapters v-else-if="comic.chapters_count" :comic="comic" :chapters="chapters"/>
-                            <comic-gallery v-else-if="comic.pages" :comic="comic" :images="images"/>
+                            <comic-gallery v-if="status.images === 'done'" :comic="comic" :images="images"/>
                         </div>
                     </template>
                     <comments-wrapper v-if="['main', 'comments'].includes(section)" type="comic" :entry="comic.id" :parent_id="$route.params.identifier"/>
@@ -209,13 +209,18 @@
         mounted() {
             if (this.images.length <= 12) this.collapsed = false;
         },
+        watch: {
+            images(newImages) {
+                if (newImages.length <= 12) this.collapsed = false;
+            }
+        },
         template: `<div class="box mb-4">
             <h6 class="box-header mb-2">
                 <list-icon/> {{ $t('app.comic.gallery') }} ({{ comic.pages }})
             </h6>
             <div class="comic-gallery d-flex flex-wrap" :class="{collapsed}">
                 <div v-for="(image, key) in images" :key="key" class="gallery-image col-6 col-md-3 py-3">
-                    <router-link :to="{ name: 'comic/reader', params: { slug: comic.slug, page: image.page } }"><img class="w-100 rounded-sm" v-lazy="image.thumbnail_url" :alt="\`\${comic.title} thumbnail page \${image.page}\`"></router-link>
+                    <router-link :to="{ name: 'comic/reader', params: { slug: comic.slug, page: image.page } }"><img class="w-100 rounded-sm" v-lazy="image.thumbnail_url" :alt="\`\${comic.title} thumbnail page \${image.page}\`" referrerpolicy="no-referrer"></router-link>
                 </div>
                 <div v-if="collapsed" class="box-actions d-flex align-items-center justify-content-center">
                     <button class="btn btn-secondary mx-2" @click="collapsed = false"><arrow-down-icon/> {{ $t('app.comic.load_more') }}</button>

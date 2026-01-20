@@ -4,5 +4,5 @@ namespace App\Scrapers;
 
 class Manytoon extends Madara
 {
-    public $domain = "https://manytoon.com";
+    public $domain = "https://manytoon.org";
 }
