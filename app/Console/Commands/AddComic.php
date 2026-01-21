@@ -28,7 +28,7 @@ use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\Utils;
 class AddComic extends Command
 {
-    protected $signature = 'comic:add {link}';
+    protected $signature = 'comic:add {link} {--scraper= : Scraper to use (e.g., hentaihand, nhentai)}';
 
     protected $description = 'Add a comic to the database';
 
@@ -38,7 +38,27 @@ class AddComic extends Command
 
     public function handle(Scraper $scraper)
     {
-        $this->scraper = $scraper;
+        // Determine which scraper to use
+        $scraperName = $this->option('scraper');
+
+        if (!$scraperName) {
+            // Try to detect scraper from URL
+            $link = $this->argument('link');
+            if (str_contains($link, 'hentaihand.com')) {
+                $scraperName = 'hentaihand';
+            } elseif (str_contains($link, 'nhentai.net') || str_contains($link, 'nhentai.com')) {
+                $scraperName = 'nhentai';
+            } else {
+                $this->error('Could not detect scraper from URL. Please specify --scraper option.');
+                return 1;
+            }
+        }
+
+        // Switch to the specified scraper
+        Scraper::switch($scraperName);
+        $this->scraper = resolve(Scraper::class);
+
+        $this->info("Using scraper: {$scraperName}");
         //pcntl_async_signals(true);
 
         // pcntl_signal(SIGINT, function() {
@@ -56,7 +76,8 @@ class AddComic extends Command
             ]);
         });
         $this->queue = DB::table('scraper')->where('link', $this->argument('link'))->first();
-        if ($this->queue->status === 'processing') throw new \Exception('Comic being processed.');
+        if ($this->queue->status === 'processing')
+            throw new \Exception('Comic being processed.');
         DB::table('scraper')->where(['id' => $this->queue->id])->update(['status' => 'processing']);
 
         $this->comic = null;
@@ -73,7 +94,8 @@ class AddComic extends Command
                 if ($source && $source->disabled) {
                     $this->warn('This source is disabled for this comic.');
                 } else {
-                    if ($source) $comic = $source->comic;
+                    if ($source)
+                        $comic = $source->comic;
                     else {
                         $this->line("Adding {$this->queue->link} to sources.");
                         $comic->sources()->create(['link' => $this->queue->link]);
@@ -81,7 +103,7 @@ class AddComic extends Command
 
                     $this->line('Updating the comic...');
                     $comic->timestamps = false;
-                    $comic->update(collect($data)->only('status', 'alternative_title', 'language_id', 'category_id', 'uploaded_at')->reject(function($value) {
+                    $comic->update(collect($data)->only('status', 'alternative_title', 'language_id', 'category_id', 'uploaded_at')->reject(function ($value) {
                         return !$value;
                     })->toArray());
                     $comic->timestamps = true;
@@ -114,13 +136,13 @@ class AddComic extends Command
                 $data = $this->getData($this->queue->link);
                 $counter = 1;
                 while (Comic::whereSlug($data['slug'])->exists()) {
-                    $data['slug'] = $data['slug'].'-'.$counter++;
+                    $data['slug'] = $data['slug'] . '-' . $counter++;
                 }
                 $this->comic = $comic = Comic::create($data);
                 $comic->image = $this->downloadImage($data['cover'], $comic->id);
                 if ($comic->image) {
                     //Optimizing images to thumbs
-                    optimize('storage/comics/'.$comic->image, 'storage/comics/thumbs/'.$comic->image);
+                    optimize('storage/comics/' . $comic->image, 'storage/comics/thumbs/' . $comic->image);
                     $comic->save();
                 }
 
@@ -135,7 +157,7 @@ class AddComic extends Command
                     $comic->images()->createMany($this->processImages($data['images'], $comic->id));
                     if (!$comic->images()->count()) {
                         $this->warn('No images were scraped');
-                        throw new \Exception('No images were scraped. ('.$this->scraper->proxy.')');
+                        throw new \Exception('No images were scraped. (' . $this->scraper->proxy . ')');
                     }
                 } else {
                     $this->processChapters($comic, $this->scraper->getChapters($this->queue->link));
@@ -145,7 +167,7 @@ class AddComic extends Command
                     $comic->image = $this->downloadImage($comic->images()->oldest('id')->first()->source_url, $comic->id);
                     if ($comic->image) {
                         //Optimizing images to thumbs
-                        optimize('storage/comics/'.$comic->image, 'storage/comics/thumbs/'.$comic->image);
+                        optimize('storage/comics/' . $comic->image, 'storage/comics/thumbs/' . $comic->image);
                         $comic->save();
                     }
                 }
@@ -153,7 +175,7 @@ class AddComic extends Command
                 $comic->sources()->create(['link' => $this->queue->link]);
             }
 
-            $this->info("\n".($comic->wasRecentlyCreated ? 'Added' : 'Updated')." \"{$comic->title}\". Downloaded ".$this->bytesToHuman($this->downloaded)." of data and took ".number_format(microtime(true) - $time_start, 2)." seconds.");
+            $this->info("\n" . ($comic->wasRecentlyCreated ? 'Added' : 'Updated') . " \"{$comic->title}\". Downloaded " . $this->bytesToHuman($this->downloaded) . " of data and took " . number_format(microtime(true) - $time_start, 2) . " seconds.");
             DB::table('scraper')->where(['id' => $this->queue->id])->delete();
         } catch (\Exception $e) {
             $this->fail(false);
@@ -161,8 +183,15 @@ class AddComic extends Command
         }
     }
 
-    public function getData($link) {
+    public function getData($link)
+    {
         $scraped = $this->scraper->getComic($link);
+
+        // Check if scraper returned null (failed to fetch)
+        if ($scraped === null) {
+            throw new \Exception('Scraper failed to fetch comic data from: ' . $link);
+        }
+
         return array_merge([
             'image' => null,
             'alternative_title' => null,
@@ -192,21 +221,23 @@ class AddComic extends Command
         $progress = $this->output->createProgressBar($total);
         foreach ($all_chapters as $chapter) {
             $progress->advance();
-            if ($comic->chapters()->where('original', $chapter['name'])->exists()) break;
+            if ($comic->chapters()->where('original', $chapter['name'])->exists())
+                break;
             $chapters[] = $this->scraper->getChapter($chapter);
         }
         $progress->finish();
-        $this->line("\nScrapped $total chapters, ".($total - count($chapters))." already exist. Adding ".count($chapters)." chapters.");
+        $this->line("\nScrapped $total chapters, " . ($total - count($chapters)) . " already exist. Adding " . count($chapters) . " chapters.");
         $ordered = array_reverse($chapters);
         foreach ($ordered as $chapter) {
-            if (!$chapter['name']) $chapter['name'] = Chapter::generate($chapter['meta'], $chapter['original']);
+            if (!$chapter['name'])
+                $chapter['name'] = Chapter::generate($chapter['meta'], $chapter['original']);
             $chapter['slug'] = Chapter::slugify($chapter['name'], ['comic_id' => $comic->id]);
             $this->line("\nAdding \"{$chapter['name']}\" ({$chapter['original']})");
             $result = $comic->chapters()->create($chapter);
             try {
                 $result->images()->createMany(array_map(function ($images) use ($comic) {
                     return array_merge($images, ['comic_id' => $comic->id]);
-                }, $this->processImages($chapter['images'], $comic->id.'/'.$result->slug)));
+                }, $this->processImages($chapter['images'], $comic->id . '/' . $result->slug)));
             } catch (\Exception $e) {
                 $result->delete();
             }
@@ -215,13 +246,15 @@ class AddComic extends Command
 
     public function processCategory($category)
     {
-        if (!$category) return null;
+        if (!$category)
+            return null;
         return Category::firstOrCreate(['slug' => $category['slug']], ['name' => $category['name']])->id;
     }
 
     public function processLanguage($language)
     {
-        if (!$language) return null;
+        if (!$language)
+            return null;
         return Language::firstOrCreate(['slug' => $language['slug']], ['name' => $language['name']])->id;
     }
 
@@ -232,7 +265,8 @@ class AddComic extends Command
         }, $tags);
     }
 
-    public function tagColor() {
+    public function tagColor()
+    {
         return Arr::random(['#f53b57', '#3c40c6', '#05c46b', '#ffa801', '#00d8d6', '#f368e0', '#bf55ec', '#6c757d', '#01a3a4', '#2e86de', '#10ac84', '#8395a7']);
     }
 
@@ -285,46 +319,82 @@ class AddComic extends Command
     {
         $processed = [];
         $totalImages = count($images);
-        $this->alert("Bắt đầu gửi {$totalImages} ảnh qua API upload...");
-    
-        // Tạo danh sách ảnh với cấu trúc cho API
-        $imageData = [];
-        foreach ($images as $index => $image) {
-            $ext = pathinfo($image['source'], PATHINFO_EXTENSION);
-            $remotePath = "comics/$folder/image_" . ($index + 1) . ".$ext"; // Đặt tên cho ảnh tải lên trên server từ xa
-    
-            $imageData[] = [
-                'url' => $image['source'],
-                'remotePath' => $remotePath
-            ];
+        $storageMode = config('filesystems.image_storage_mode', 'hotlink');
+
+        $this->alert("Đang xử lý {$totalImages} ảnh với chế độ: {$storageMode}");
+
+        switch ($storageMode) {
+            case 'hotlink':
+                // Sử dụng link gốc, không tải xuống
+                foreach ($images as $index => $image) {
+                    $processed[] = [
+                        'page' => $index + 1,
+                        'image' => $image['source'],
+                        'thumbnail' => $image['thumbnail'] ?? $image['source']
+                    ];
+                }
+                $this->info("Sử dụng {$totalImages} ảnh với chế độ hotlink (không tải xuống).");
+                break;
+
+            case 'local':
+            case 'public':
+            case 's3':
+                // Tải xuống và lưu trữ ảnh
+                $disk = $storageMode === 's3' ? 's3' : ($storageMode === 'public' ? 'public' : 'local');
+                $progress = $this->output->createProgressBar($totalImages);
+                $progress->start();
+
+                foreach ($images as $index => $image) {
+                    $ext = pathinfo($image['source'], PATHINFO_EXTENSION) ?: 'jpg';
+                    $filename = "image_" . ($index + 1) . ".$ext";
+                    $path = "comics/$folder/$filename";
+
+                    try {
+                        // Tải xuống ảnh
+                        $context = $image['context'] ?? null;
+                        $content = @file_get_contents($this->scraper->safe_urlencode($image['source']), false, $context);
+
+                        if ($content) {
+                            // Lưu vào storage
+                            Storage::disk($disk)->put($path, $content);
+                            $this->downloaded += strlen($content);
+
+                            // Tạo URL dựa trên disk
+                            if ($disk === 's3') {
+                                $url = Storage::disk($disk)->url($path);
+                            } elseif ($disk === 'public') {
+                                $url = Storage::disk($disk)->url($path);
+                            } else {
+                                // Local disk
+                                $url = url("storage/$path");
+                            }
+
+                            $processed[] = [
+                                'page' => $index + 1,
+                                'image' => $url,
+                                'thumbnail' => $url
+                            ];
+                        } else {
+                            $this->warn("Không thể tải ảnh: {$image['source']}");
+                        }
+                    } catch (\Exception $e) {
+                        $errorIndex = $index + 1;
+                        $this->error("Lỗi khi xử lý ảnh {$errorIndex}: " . $e->getMessage());
+                    }
+
+                    $progress->advance();
+                }
+
+                $progress->finish();
+                $this->line('');
+                $this->info("Đã tải và lưu trữ " . count($processed) . "/{$totalImages} ảnh.");
+                break;
+
+            default:
+                $this->error("Chế độ lưu trữ không hợp lệ: {$storageMode}");
+                throw new \Exception("Invalid image storage mode: {$storageMode}");
         }
-    
-        // Gửi yêu cầu POST đến API upload
-        $client = new Client();
-        $response = $client->post('https://api.spoilerplus.asia/api.php', [
-            'headers' => [
-                'Content-Type' => 'application/json'
-            ],
-            'json' => [
-                'images' => $imageData
-            ]
-        ]);
-    
-        // Xử lý phản hồi từ API
-        $responseBody = json_decode($response->getBody()->getContents(), true);
-        if (isset($responseBody['success']) && $responseBody['success']) {
-            foreach ($responseBody['urls'] as $key => $url) {
-                $processed[] = [
-                    'page' => $key + 1,
-                    'image' => "https://h.spoilerplus.asia/comics/$folder/" . basename($url),
-                    'thumbnail' => "https://h.spoilerplus.asia/comics/$folder/" . basename($url)
-                ];
-            }
-            $this->info("Tải lên thành công " . count($responseBody['urls']) . " ảnh.");
-        } else {
-            $this->error("Lỗi khi tải lên ảnh. API không thành công.");
-        }
-    
+
         return $processed;
     }
 
@@ -350,17 +420,22 @@ class AddComic extends Command
         return round($bytes, 2) . ' ' . $units[$i];
     }
 
-    public function getRelationships() {
-        if ($this->relationships) return $this->relationships;
+    public function getRelationships()
+    {
+        if ($this->relationships)
+            return $this->relationships;
         return $this->relationships = collect(config('relationships'))->transform(function ($item, $key) {
             $item['tags'] = array_map('str_slug', $item['tags']);
             return $item;
         });
     }
 
-    public function fail($kill = true) {
-        if ($this->comic) $this->comic->delete();
+    public function fail($kill = true)
+    {
+        if ($this->comic)
+            $this->comic->delete();
         DB::table('scraper')->where('id', $this->queue->id)->update(['status' => 'failed']);
-        if ($kill) exit;
+        if ($kill)
+            exit;
     }
 }

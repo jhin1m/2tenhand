@@ -82,7 +82,7 @@ return [
             'credentials' => [
                 'key' => env('CEPH_ACCESS_KEY', 'GUOCNAS7EIDEYDBQHGMB'),
                 'secret' => env('CEPH_SECRET_KEY', '3o0jYDYTRGqXN00GJi7u6VcFrJlckMrpqdIUnvgA'),
-                ],
+            ],
             'region' => '',
             'prefix' => '',
             'bucket' => env('CEPH_BUCKET', 'nhe'),
@@ -90,7 +90,7 @@ return [
             'ACL' => env('CEPH_ACL', 'public-read'), //private,'public-read',
             'visibility' => 'public'
         ],
-        
+
         'files' => [
             'base_url' => env('CEPH_BASE_URL', 'https://cdn.hentaihand.com'),
             'driver' => 'ceph',
@@ -98,7 +98,7 @@ return [
             'credentials' => [
                 'key' => env('CEPH_ACCESS_KEY', 'GUOCNAS7EIDEYDBQHGMB'),
                 'secret' => env('CEPH_SECRET_KEY', '3o0jYDYTRGqXN00GJi7u6VcFrJlckMrpqdIUnvgA'),
-                ],
+            ],
             'region' => '',
             'prefix' => '',
             'bucket' => env('CEPH_BUCKET', 'nhe'),
@@ -108,11 +108,19 @@ return [
         ],
     ],
 
-    'bunnycdn' => [
-        'access_key' => env('BUNNY_CDN_ACCESS_KEY'),
-        'storage_zone' => env('BUNNY_CDN_STORAGE_ZONE'),
-        'region' => env('BUNNY_CDN_REGION'),
-        'url' => env('BUNNY_CDN_URL'),
-    ],
+    /*
+    |--------------------------------------------------------------------------
+    | Image Storage Mode
+    |--------------------------------------------------------------------------
+    |
+    | Determines how comic images are stored:
+    | - 'hotlink': Use original URLs without downloading (fastest, no storage used)
+    | - 'local': Download and store locally
+    | - 'public': Download and store in public directory
+    | - 's3': Download and upload to S3-compatible storage
+    |
+    */
+
+    'image_storage_mode' => env('IMAGE_STORAGE_MODE', 'hotlink'),
 
 ];

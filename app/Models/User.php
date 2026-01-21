@@ -3,32 +3,39 @@
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 use App\Notifications;
 use Storage;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     protected $connection = 'users';
     use Notifiable, HasApiTokens;
 
     protected $fillable = [
-        'username', 'name', 'email', 'password', 'role'
+        'username',
+        'name',
+        'email',
+        'password',
+        'role'
     ];
 
     protected $hidden = [
-        'email', 'password', 'email_verified_at'
+        'email',
+        'password',
+        'email_verified_at'
     ];
 
     protected $appends = [
-        'avatar_url', 'signed_up', 'verified'
+        'avatar_url',
+        'signed_up',
+        'verified'
     ];
 
     public function getAvatarUrlAttribute()
     {
-        return Storage::disk(getstoragedisk())->url('storage/avatars/'.$this->id.'.jpg?_='.$this->updated_at->timestamp);
+        return Storage::disk(getstoragedisk())->url('storage/avatars/' . $this->id . '.jpg?_=' . $this->updated_at->timestamp);
     }
 
     public function getSignedUpAttribute()
