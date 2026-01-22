@@ -8,14 +8,11 @@
                     <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><sliders-icon /> {{
                         $t('app.filters.sort') }}</button>
                     <div class="dropdown-menu">
-                        <template v-for="option in sorting" :key="option">
-                            <a class="dropdown-item"
-                                @click="filters.order = (filters.sort == option && filters.order == 'desc' ? 'asc' : 'desc'); filters.sort = option">{{
-                                    $t('app.filters.' + option) }} <minus-icon
-                                    v-if="filters.sort != option" /><arrow-down-icon
-                                    v-else-if="filters.sort == option && filters.order == 'desc'" /><arrow-up-icon
-                                    v-else /></a>
-                        </template>
+                        <a class="dropdown-item" v-for="option in sorting" :key="option"
+                            @click="filters.order = (filters.sort == option && filters.order == 'desc' ? 'asc' : 'desc'); filters.sort = option">{{
+                                $t('app.filters.' + option) }} <minus-icon v-if="filters.sort != option" /><arrow-down-icon
+                                v-else-if="filters.sort == option && filters.order == 'desc'" /><arrow-up-icon
+                                v-else /></a>
                     </div>
                 </div>
             </div>
