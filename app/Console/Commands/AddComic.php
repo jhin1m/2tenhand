@@ -139,11 +139,22 @@ class AddComic extends Command
                     $data['slug'] = $data['slug'] . '-' . $counter++;
                 }
                 $this->comic = $comic = Comic::create($data);
-                $comic->image = $this->downloadImage($data['cover'], $comic->id);
-                if ($comic->image) {
-                    //Optimizing images to thumbs
-                    optimize('storage/comics/' . $comic->image, 'storage/comics/thumbs/' . $comic->image);
+
+                // Handle cover image based on storage mode
+                $storageMode = config('filesystems.image_storage_mode', 'hotlink');
+                if ($storageMode === 'hotlink' && isset($data['cover'])) {
+                    // In hotlink mode, use the URL directly
+                    $comic->image = $data['cover'];
                     $comic->save();
+                    $this->line("Using hotlink for cover image.");
+                } else {
+                    // Download cover image for other modes
+                    $comic->image = $this->downloadImage($data['cover'], $comic->id);
+                    if ($comic->image) {
+                        //Optimizing images to thumbs
+                        optimize('storage/comics/' . $comic->image, 'storage/comics/thumbs/' . $comic->image);
+                        $comic->save();
+                    }
                 }
 
                 $comic->authors()->attach($this->processAuthors($data['authors']));

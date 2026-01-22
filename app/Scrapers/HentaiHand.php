@@ -61,8 +61,10 @@ class HentaiHand extends Scraper
             $comicsData = $data['data'] ?? $data['comics'] ?? $data;
 
             foreach ($comicsData as $comic) {
+                // Use slug if available, otherwise use ID
+                $identifier = $comic['slug'] ?? $comic['id'];
                 $comics[] = [
-                    'link' => "https://hentaihand.com/en/{$comic['id']}",
+                    'link' => "https://hentaihand.com/en/{$identifier}",
                     'title' => $comic['title'] ?? ''
                 ];
             }
