@@ -342,7 +342,7 @@ select.form-control {
         .image {
             border-radius: 4px;
             box-shadow: 0 7px 14px 0 rgba(59, 65, 94, 0.1), 0 3px 6px 0 rgba(0, 0, 0, 0.07);
-            height: 185px;
+            height: 260px;
             width: 100%;
             background-position: 50% 50%;
             background-repeat: no-repeat;
@@ -351,6 +351,9 @@ select.form-control {
             margin-bottom: 10px;
             .col-lg-3 & {
                 height: 255px;
+            }
+            .col-lg-cards-5 & {
+                height: 280px;
             }
         }
         .comic-language {
@@ -632,9 +635,12 @@ select.form-control {
         height: 140px;
     }
     &.comic {
-        height: 285px;
+        height: 360px;
         .col-lg-3 & {
             height: 325px;
+        }
+        .col-lg-cards-5 & {
+            height: 390px;
         }
     }
     &.group {
@@ -798,6 +804,15 @@ select.form-control {
         margin-right: 2px;
     }
 }
+
+// Custom grid class for 5 columns on large screens
+@media (min-width: 992px) {
+    .col-lg-cards-5 {
+        flex: 0 0 20%;
+        max-width: 20%;
+    }
+}
+
 
 .platform {
     margin-bottom: 0.5rem;

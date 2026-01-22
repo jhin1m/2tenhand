@@ -96,10 +96,10 @@ export default {
                 return this.customGridClass;
             }
             // Default: 4 columns on desktop (col-lg-3)
-            // Large: 6 columns on desktop (col-lg-2)
+            // Large: 5 columns on desktop (20% width each - custom class)
             return this.layout === 'large'
-                ? 'col-6 col-sm-4 col-md-3 col-lg-2 p-3'
-                : 'col-6 col-sm-4 col-md-4 col-lg-3 p-3';
+                ? 'col-6 col-sm-4 col-md-3 col-lg-cards-5 p-2'
+                : 'col-6 col-sm-4 col-md-4 col-lg-3 p-2';
         },
         computedPlaceholderType() {
             return this.placeholderType || this.componentType;
