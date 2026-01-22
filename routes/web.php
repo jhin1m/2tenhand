@@ -6,22 +6,6 @@ Route::get('/', function () {
     return redirect('/home');
 });
 
-// Test route for site configuration
-Route::get('/test-config', function () {
-    $cdn = \Illuminate\Support\Facades\Storage::disk(getstoragedisk());
-    return view('test-config', [
-        'title' => 'Site Config Test',
-        'description' => 'Testing site configuration',
-        'cdn' => $cdn,
-        'ads' => [],
-        'country' => 'VN',
-        'is_mobile' => false,
-        'nsfw' => false,
-        'popup' => ''
-    ]);
-});
-
-
 Route::pattern('page', '[0-9]+');
 
 Route::get('translations/{lang}.json', 'TranslationController@generate');
