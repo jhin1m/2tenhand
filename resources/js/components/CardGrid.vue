@@ -87,7 +87,7 @@ export default {
         // Number of placeholder items to show during loading
         placeholderCount: {
             type: Number,
-            default: 18
+            default: 20
         }
     },
     computed: {

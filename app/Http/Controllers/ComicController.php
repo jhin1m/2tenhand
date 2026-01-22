@@ -16,7 +16,7 @@ class ComicController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:api','admin'])->only(['store', 'update', 'destroy', 'delete_chapter']);
+        $this->middleware(['auth:api', 'admin'])->only(['store', 'update', 'destroy', 'delete_chapter']);
         $this->middleware('auth:api')->only('download', 'favorite');
         $this->middleware(StartSession::class)->only('show');
     }
@@ -32,7 +32,8 @@ class ComicController extends Controller
                 $comics->orderBy($request->sort, $order);
             } elseif ($request->sort == 'popularity') {
                 $duration = (in_array($request->duration, ['day', 'week', 'month', 'year', 'all']) ? $request->duration : 'day');
-                if ($duration != 'all') $comics->whereDate(config('site.id') !== 'readmanhwa' ? 'uploaded_at' : 'updated_at', '>=', date("Y-m-d", strtotime(($duration === 'day' ? '-2' : '-1')." $duration")));
+                if ($duration != 'all')
+                    $comics->whereDate(config('site.id') !== 'readmanhwa' ? 'uploaded_at' : 'updated_at', '>=', date("Y-m-d", strtotime(($duration === 'day' ? '-2' : '-1') . " $duration")));
                 $comics->orderBy('visits', $order);
             }
         }
@@ -61,8 +62,10 @@ class ComicController extends Controller
             if (count($attributes)) {
                 $comics->where(function ($query) use ($attributes) {
                     foreach ($attributes as $i => $attribute) {
-                        if ($i == 0) $query->where($attribute, true);
-                        else $query->orWhere($attribute, true);
+                        if ($i == 0)
+                            $query->where($attribute, true);
+                        else
+                            $query->orWhere($attribute, true);
                     }
                 });
             }
@@ -71,12 +74,13 @@ class ComicController extends Controller
             $comics->whereIn('status', Arr::wrap($request->statuses));
         if ($request->filled('q'))
             $comics->simpleSearch($request->q);
-        $limit = (($request->per_page > 0 && $request->per_page < 100) ? $request->per_page : 18);
+        $limit = (($request->per_page > 0 && $request->per_page < 100) ? $request->per_page : 20);
         if ($request->has('discover'))
             $response = $comics->random($limit)->limit($limit)->get();
         else if ($request->has('latest'))
             $response = $comics->limit($limit)->orderBy('uploaded_at', 'desc')->get();
-        else $response = $comics->paginate($limit);
+        else
+            $response = $comics->paginate($limit);
         return response()->json($response);
     }
 
@@ -92,7 +96,7 @@ class ComicController extends Controller
             'description' => 'nullable',
             'image' => [
                 function ($attribute, $value, $fail) {
-                    if (!empty($value) && !file_exists(storage_path('app/temp/'.$value))) {
+                    if (!empty($value) && !file_exists(storage_path('app/temp/' . $value))) {
                         $fail("The $attribute wasn't uploaded successfully");
                     }
                 }
@@ -116,17 +120,19 @@ class ComicController extends Controller
         ]);
         $comic = Comic::create($request->all());
         if (!empty($request->image)) {
-            File::move(storage_path('app/temp/'.$request->image), storage_path('app/public/comics/'.$comic->id.'.jpg'));
-            $comic->image = $comic->id.'.jpg';
+            File::move(storage_path('app/temp/' . $request->image), storage_path('app/public/comics/' . $comic->id . '.jpg'));
+            $comic->image = $comic->id . '.jpg';
             $comic->save();
-            optimize('comics/'.$comic->image, 'comics/thumbs/'.$comic->image);
+            optimize('comics/' . $comic->image, 'comics/thumbs/' . $comic->image);
         }
 
         $comic->authors()->attach($request->authors);
         $comic->artists()->attach($request->artists);
         $comic->characters()->attach($request->characters);
-        $comic->tags()->attach($request->tags);  $comic->relationships()->attach($request->relationships);
-        $comic->parodies()->attach($request->parodies);    $comic->groups()->attach($request->groups);
+        $comic->tags()->attach($request->tags);
+        $comic->relationships()->attach($request->relationships);
+        $comic->parodies()->attach($request->parodies);
+        $comic->groups()->attach($request->groups);
 
         foreach ($request->sources as $source) {
             $comic->sources()->create(['link' => $source['link'], 'disabled' => $source['disabled']]);
@@ -137,7 +143,8 @@ class ComicController extends Controller
         ], 201);
     }
 
-    public function redirect($id) {
+    public function redirect($id)
+    {
         //Get link code
         $linkcode = Comic::where('linkcode', $id);
         if (!$linkcode->get()->isEmpty()) {
@@ -145,7 +152,8 @@ class ComicController extends Controller
         } else {
             $comic = Comic::find($id);
         }
-        if (!$comic) return redirect('404');
+        if (!$comic)
+            return redirect('404');
         return redirect()->route('comic', ['locale' => app()->getLocale(), 'slug' => $comic->slug]);
     }
 
@@ -153,8 +161,10 @@ class ComicController extends Controller
     {
         $defaults = ['parodies', 'tags', 'artists', 'authors', 'groups', 'characters', 'language', 'category', 'relationships'];
         $query = Comic::whereSlug($slug);
-        if (!array_diff(explode(',', $request->with), ['parodies', 'tags', 'artists', 'authors', 'groups', 'characters', 'language', 'category', 'images', 'relationships', 'chapters', 'sources'])) $query->with(array_merge($defaults, explode(',', $request->with)));
-        else $query->with($defaults);
+        if (!array_diff(explode(',', $request->with), ['parodies', 'tags', 'artists', 'authors', 'groups', 'characters', 'language', 'category', 'images', 'relationships', 'chapters', 'sources']))
+            $query->with(array_merge($defaults, explode(',', $request->with)));
+        else
+            $query->with($defaults);
         $comic = $query->firstOrFail()->append(['favorited', 'downloadable', 'first_chapter', 'meta_description']);
         $last_comic = $request->session()->get('last_comic');
         if (!$last_comic || $last_comic != $comic->id) {
@@ -190,16 +200,18 @@ class ComicController extends Controller
     public function images(Request $request, $comic_slug, $chapter_slug = null)
     {
         $comic = Comic::whereSlug($comic_slug)->setEagerLoads([])->with('tags:slug')->firstOrFail()->setAppends([]);
-        if ($comic->premium && !auth('api')->user()) abort(401);
+        if ($comic->premium && !auth('api')->user())
+            abort(401);
         $chapter = null;
         $next_chapter = null;
         if ($chapter_slug) {
             $chapter = $comic->chapters()->whereSlug($chapter_slug)->firstOrFail();
-            if ($user = auth('api')->user()) $chapter->readers()->firstOrCreate([
-                'user_id' => $user->id
-            ]);
+            if ($user = auth('api')->user())
+                $chapter->readers()->firstOrCreate([
+                    'user_id' => $user->id
+                ]);
             $next_chapter = $comic->chapters()->where('id', '>', $chapter->id)->oldest('id')->first();
-        }        
+        }
         return response()->json([
             'comic' => $comic,
             'chapter' => $chapter,
@@ -208,7 +220,8 @@ class ComicController extends Controller
         ]);
     }
 
-    public function favorite(Request $request, $slug) {
+    public function favorite(Request $request, $slug)
+    {
         $comic = Comic::whereSlug($slug)->firstOrFail()->append('favorited');
         $user_id = auth('api')->user()->id;
         if ($comic->favorited) {
@@ -222,14 +235,17 @@ class ComicController extends Controller
         ]);
     }
 
-    public function download(Request $request, $slug) {
+    public function download(Request $request, $slug)
+    {
         $comic = Comic::whereSlug($slug)->firstOrFail();
-        if (!$comic->downloadable) abort(400);
-        $zip = md5($comic->id).'.zip';
+        if (!$comic->downloadable)
+            abort(400);
+        $zip = md5($comic->id) . '.zip';
         $directory = Storage::disk(getstoragedisk())->path("images/$comic->id");
         $destination = Storage::disk(getstoragedisk())->path("archives/$zip");
         exec("zip -qrj -0 $destination $directory", $output, $failed);
-        if ($failed) abort(400, 'Server failed to generate the ZIP file.');
+        if ($failed)
+            abort(400, 'Server failed to generate the ZIP file.');
         return response()->json([
             'download_url' => Storage::disk(getstoragedisk())->url("archives/$zip")
         ]);
@@ -247,7 +263,7 @@ class ComicController extends Controller
             'description' => 'nullable',
             'image' => [
                 function ($attribute, $value, $fail) {
-                    if (!empty($value) && !file_exists(storage_path('app/temp/'.$value))) {
+                    if (!empty($value) && !file_exists(storage_path('app/temp/' . $value))) {
                         $fail("The $attribute wasn't uploaded successfully");
                     }
                 }
@@ -271,20 +287,22 @@ class ComicController extends Controller
         ]);
         $comic->update($request->all());
         if (!empty($request->image)) {
-            File::move(storage_path('app/temp/'.$request->image), storage_path('app/public/comics/'.$comic->id.'.jpg'));
-            $comic->image = $comic->id.'.jpg';
+            File::move(storage_path('app/temp/' . $request->image), storage_path('app/public/comics/' . $comic->id . '.jpg'));
+            $comic->image = $comic->id . '.jpg';
             $comic->save();
-            optimize('comics/'.$comic->image, 'comics/thumbs/'.$comic->image);
+            optimize('comics/' . $comic->image, 'comics/thumbs/' . $comic->image);
         }
 
         $comic->authors()->sync($request->authors);
         $comic->artists()->sync($request->artists);
         $comic->characters()->sync($request->characters);
-        $comic->tags()->sync($request->tags);  $comic->relationships()->sync($request->relationships);
-        $comic->parodies()->sync($request->parodies);    $comic->groups()->sync($request->groups);
+        $comic->tags()->sync($request->tags);
+        $comic->relationships()->sync($request->relationships);
+        $comic->parodies()->sync($request->parodies);
+        $comic->groups()->sync($request->groups);
 
         foreach ($request->sources as $source) {
-            $comic->sources()->updateOrCreate(['link' => $source['link']],['disabled' => $source['disabled']]);
+            $comic->sources()->updateOrCreate(['link' => $source['link']], ['disabled' => $source['disabled']]);
         }
 
         return response()->json([

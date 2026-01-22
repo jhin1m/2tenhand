@@ -191,8 +191,8 @@
             </div>
         </div>
         <card-grid :items="comics" :status="status.comics" component-type="comic" layout="large"
-            :placeholder-count="18" />
-        <pagination v-if="pagination.last_page > 1" :pagination="pagination" :offset="18" @paginate="paginate">
+            :placeholder-count="20" />
+        <pagination v-if="pagination.last_page > 1" :pagination="pagination" :offset="20" @paginate="paginate">
         </pagination>
     </div>
 </template>
@@ -280,7 +280,8 @@ export default {
                 parodies: this.getQuery('parodies'),
                 languages: this.getQuery('languages'),
                 attributes: this.getQuery('attributes'),
-                duration: (DURATIONS.includes(this.$route.query.duration) ? this.$route.query.duration : 'day')
+                duration: (DURATIONS.includes(this.$route.query.duration) ? this.$route.query.duration : 'day'),
+                per_page: 20
             }
         };
     },
@@ -383,7 +384,7 @@ export default {
                     per_page: data.per_page,
                     current_page: data.current_page,
                     last_page: data.last_page,
-                    from: data.to,
+                    from: data.from,
                     to: data.to,
                 };
                 this.status.comics = 'done';
