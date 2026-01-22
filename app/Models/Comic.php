@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage ;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Comic extends Model
@@ -11,11 +11,28 @@ class Comic extends Model
     use Traits\Filterable, Traits\Searchable, Traits\Countable, Traits\Randomable, \Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
     protected $fillable = [
-        'title', 'alternative_title', 'linkcode', 'slug', 'description', 'language_id', 'category_id', 'rewritten', 'translated', 'speechless', 'status', 'uploaded_at'
+        'title',
+        'alternative_title',
+        'linkcode',
+        'slug',
+        'description',
+        'language_id',
+        'category_id',
+        'rewritten',
+        'translated',
+        'speechless',
+        'status',
+        'uploaded_at'
     ];
 
     protected $hidden = [
-        'created_at', 'updated_at', 'relevance_score', 'language_id', 'category_id', 'image', 'visits'
+        'created_at',
+        'updated_at',
+        'relevance_score',
+        'language_id',
+        'category_id',
+        'image',
+        'visits'
     ];
 
     protected $appends = [
@@ -90,12 +107,26 @@ class Comic extends Model
 
     public function getImageUrlAttribute()
     {
-        return Storage::disk(getstoragedisk())->url('storage/comics/' . ($this->image ?? 'default.jpg'));
+        $image = $this->image ?? 'default.jpg';
+
+        // If image already contains http:// or https://, return it directly
+        if (Str::startsWith($image, ['http://', 'https://'])) {
+            return $image;
+        }
+
+        return Storage::disk(getstoragedisk())->url('storage/comics/' . $image);
     }
 
     public function getThumbUrlAttribute()
     {
-        return Storage::disk(getstoragedisk())->url('storage/comics/thumbs/' . ($this->image ?? 'default.jpg'));
+        $image = $this->image ?? 'default.jpg';
+
+        // If image already contains http:// or https://, return it directly
+        if (Str::startsWith($image, ['http://', 'https://'])) {
+            return $image;
+        }
+
+        return Storage::disk(getstoragedisk())->url('storage/comics/thumbs/' . $image);
     }
 
     public function getShortUrlAttribute()
@@ -105,7 +136,8 @@ class Comic extends Model
 
     public function getFavoritedAttribute()
     {
-        if ($user = auth('api')->user()) return $this->favorites()->where('user_id', $user->id)->exists();
+        if ($user = auth('api')->user())
+            return $this->favorites()->where('user_id', $user->id)->exists();
         return false;
     }
 
@@ -187,7 +219,7 @@ class Comic extends Model
     public function sessions()
     {
         return $this->hasMany(Session::class, 'entry')->where('sessions.type', 'comic')->selectRaw('entry, sum(visits) as total')
-        ->groupBy('entry');
+            ->groupBy('entry');
     }
 
     public function getFirstChapterAttribute()

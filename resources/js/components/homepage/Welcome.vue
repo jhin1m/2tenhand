@@ -1,22 +1,23 @@
 <template>
   <div id="home">
     <!-- Top Hero Section -->
-    <div class="hero-section text-white d-flex align-items-center">
+    <div class="hero-section text-white d-flex align-items-center justify-content-center">
       <div class="hero-overlay"></div>
       <div class="container position-relative z-index-1">
         <div class="hero-content text-center py-5">
-          <h1 class="hero-title mb-4 animate-fade-in">
-            Chào mừng đến với <span class="text-primary">{{ $site.name }}</span>
+          <h1 class="hero-title mb-3 animate-fade-in">
+            <span class="text-primary">{{ $site.name }}</span>
           </h1>
-          <p class="hero-subtitle mb-5 animate-fade-in-delay">
-            Thế giới truyện tranh miễn phí, cập nhật nhanh nhất mỗi ngày.
+          <p class="hero-subtitle mb-4 animate-fade-in-delay">
+            Thư viện truyện tranh trực tuyến lớn nhất Việt Nam
           </p>
 
           <!-- Search Bar -->
-          <div id="xsearch" class="search-container mx-auto mb-5">
+          <div id="xsearch" class="search-container mx-auto mb-4 animate-fade-in-delay">
             <form action="/latest?q=" method="get" autocomplete="off" id="search-home-form" class="d-flex w-100">
               <div class="input-group shadow-lg overflow-hidden rounded-pill border-0">
-                <input type="text" name="q" class="form-control form-control-lg border-0 px-4 py-3 bg-white-smoke"
+                <input type="text" name="q"
+                  class="form-control form-control-lg border-0 px-4 py-3 bg-dark-input text-white"
                   placeholder="Tìm kiếm truyện, tác giả..." required />
                 <div class="input-group-append">
                   <button class="btn btn-primary px-4 border-0" type="submit">
@@ -27,108 +28,116 @@
             </form>
           </div>
 
-          <!-- CTA Buttons -->
-          <div class="cta-buttons d-flex justify-content-center gap-3 animate-fade-in-delay-2">
-            <router-link :to="{ name: 'comics' }"
-              class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm transform-hover">
-              Bắt đầu đọc <i class="fas fa-arrow-right ml-2"></i>
+          <div class="d-flex justify-content-center animate-fade-in-delay-2">
+            <router-link :to="{ name: 'comics' }" class="btn btn-outline-light rounded-pill px-4 mr-3">
+              <book-open-icon size="1.2x" class="mr-2" /> Tất cả truyện
+            </router-link>
+            <router-link :to="{ name: 'comics', query: { sort: 'latest' } }" class="btn btn-primary rounded-pill px-4">
+              Mới cập nhật <arrow-right-icon size="1.2x" class="ml-2" />
             </router-link>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Feature Section -->
-    <div class="features-section py-5">
+    <!-- Content Section -->
+    <div class="content-section bg-dark-base py-5">
       <div class="container">
-        <div class="row text-center g-4">
+
+        <!-- Popular Comics -->
+        <div class="section-wrapper mb-5 animate-up">
+          <popular-comics />
+        </div>
+
+        <!-- Latest Updates -->
+        <div class="section-wrapper mb-5 animate-up delay-1">
+          <latest-updates />
+        </div>
+
+        <!-- Features Scale Down -->
+        <div class="row text-center g-4 py-4 border-top border-gray-dark">
           <div class="col-md-4">
-            <div class="feature-card p-4 rounded-lg bg-dark-soft border border-gray transition-card">
-              <div class="feature-icon mb-3">
-                <i class="fas fa-bolt text-warning fa-3x"></i>
-              </div>
-              <h3 class="h4 mb-3">Cập nhật siêu tốc</h3>
-              <p class="text-muted mb-0">Luôn mang đến những chương mới nhất nhanh nhất có thể cho bạn.</p>
+            <div class="p-3">
+              <h3 class="h5 mb-2 text-warning"><i class="fas fa-bolt mr-2"></i>Cập nhật nhanh</h3>
+              <p class="text-muted small mb-0">Chương mới được cập nhật liên tục mỗi giờ.</p>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="feature-card p-4 rounded-lg bg-dark-soft border border-gray transition-card">
-              <div class="feature-icon mb-3">
-                <i class="fas fa-gem text-primary fa-3x"></i>
-              </div>
-              <h3 class="h4 mb-3">Chất lượng cao</h3>
-              <p class="text-muted mb-0">Hình ảnh sắc nét, dịch thuật mượt mà cho trải nghiệm đọc tốt nhất.</p>
+            <div class="p-3">
+              <h3 class="h5 mb-2 text-primary"><i class="fas fa-gem mr-2"></i>Chất lượng cao</h3>
+              <p class="text-muted small mb-0">Ảnh đẹp, load nhanh, không quảng cáo khó chịu.</p>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="feature-card p-4 rounded-lg bg-dark-soft border border-gray transition-card">
-              <div class="feature-icon mb-3">
-                <i class="fas fa-shield-alt text-success fa-3x"></i>
-              </div>
-              <h3 class="h4 mb-3">Hoàn toàn miễn phí</h3>
-              <p class="text-muted mb-0">Truy cập không giới hạn kho truyện khổng lồ mà không tốn một xu.</p>
+            <div class="p-3">
+              <h3 class="h5 mb-2 text-success"><i class="fas fa-check-circle mr-2"></i>Miễn phí 100%</h3>
+              <p class="text-muted small mb-0">Đọc truyện thả ga không lo về giá.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SEO Content Section -->
-    <div class="seo-content py-5 bg-black-darker">
+    <!-- SEO Content Section (Hidden visually but kept for SEO if needed, or structured better) -->
+    <div class="seo-content py-4 bg-black-darker border-top border-gray-dark">
       <div class="container text-center">
-        <h2 class="display-5 mb-4">{{ $site.name }} - Đọc truyện tranh Online tốt nhất</h2>
-        <div class="row justify-content-center">
-          <div class="col-lg-8">
-            <p class="lead text-muted mb-4">
-              Chúng tôi được xây dựng với sứ mệnh mang lại trải nghiệm đọc truyện tuyệt vời nhất.
-              Giao diện hiện đại, dễ sử dụng trên cả máy tính và điện thoại.
-              Tham gia ngay vào cộng đồng yêu truyện tranh hàng đầu Việt Nam.
-            </p>
-            <hr class="border-secondary my-5 w-25">
-            <p class="text-justify-center">
-              Nếu bạn đang tìm kiếm một nơi an toàn, nhanh chóng và chất lượng để đắm chìm vào thế giới Manga, Manhua
-              hay Manhwa,
-              <strong>{{ $site.name }}</strong> chính là điểm dừng chân lý tưởng của bạn.
-            </p>
-          </div>
-        </div>
+        <h2 class="h6 text-muted mb-3">{{ $site.name }} - Nền tảng đọc truyện tranh online hàng đầu</h2>
+        <p class="text-muted small mb-0 w-75 mx-auto">
+          Cổng truyện tranh đa dạng thể loại: Manga, Manhua, Manhwa. Giao diện tối ưu trải nghiệm người dùng trên mọi
+          thiết bị.
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import PopularComics from './PopularComics.vue';
+import LatestUpdates from './LatestUpdates.vue';
+
 export default {
   name: "HomePage",
+  components: {
+    PopularComics,
+    LatestUpdates
+  }
 };
 </script>
 
 <style scoped>
-/* Color Palette & Custom Utilities */
-.bg-dark-soft {
-  background: #1f1c25;
+/* Theme Colors & Variables */
+.bg-dark-base {
+  background-color: #1a191e;
 }
 
 .bg-black-darker {
-  background: #151419;
+  background-color: #151419;
 }
 
-.bg-white-smoke {
-  background: #f8f9fa;
-  color: #333;
+.bg-dark-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  backdrop-filter: blur(10px);
 }
 
-.border-gray {
+.bg-dark-input:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+
+.bg-dark-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.border-gray-dark {
   border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Hero Section Styles */
+/* Hero Section */
 .hero-section {
   position: relative;
-  min-height: 80vh;
-  background: linear-gradient(135deg, #1a191e 0%, #231f2a 100%);
-  background-size: cover;
-  background-position: center;
+  min-height: 55vh;
+  background: radial-gradient(circle at top right, #2d2a35 0%, #1a191e 100%);
   overflow: hidden;
 }
 
@@ -136,62 +145,51 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(94, 114, 228, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(to bottom, rgba(26, 25, 30, 0.3), #1a191e),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
 .hero-title {
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -1px;
 }
 
 .hero-subtitle {
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* Search Bar Styles */
 .search-container {
-  max-width: 650px;
-  position: relative;
-}
-
-.search-container input:focus {
-  background: #fff;
-  box-shadow: 0 0 20px rgba(94, 114, 228, 0.3);
-}
-
-/* Feature Cards */
-.feature-card {
-  height: 100%;
-  transition: all 0.3s ease;
-}
-
-.feature-card:hover {
-  transform: translateY(-10px);
-  background: #2a2632;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-  border-color: rgba(94, 114, 228, 0.3) !important;
+  max-width: 600px;
 }
 
 /* Animations */
 .animate-fade-in {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .animate-fade-in-delay {
-  animation: fadeIn 0.8s ease-out 0.2s both;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .animate-fade-in-delay-2 {
-  animation: fadeIn 0.8s ease-out 0.4s both;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
-@keyframes fadeIn {
+.animate-up {
+  animation: slideUp 0.8s ease-out both;
+}
+
+.delay-1 {
+  animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -203,30 +201,30 @@ export default {
   }
 }
 
-.transform-hover {
-  transition: transform 0.2s ease;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.transform-hover:hover {
-  transform: scale(1.05);
-}
-
-.gap-3 {
-  gap: 1rem;
-}
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
+  .hero-section {
+    min-height: 45vh;
+  }
+
   .hero-title {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 
   .hero-subtitle {
-    font-size: 1.1rem;
-  }
-
-  .hero-section {
-    min-height: 60vh;
+    font-size: 1rem;
   }
 }
 </style>

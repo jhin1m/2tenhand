@@ -1,7 +1,7 @@
 {
-    "id": "eroxhentai",
-    "name": "EroxHentai",
-    "letter": "E",
+    "id": "mangareader",
+    "name": "MangaReader",
+    "letter": "M",
     "features": [
         "artists",
         "tags",
@@ -14,6 +14,6 @@
         "dmca"
     ],
     "social": [
-        "https://eroxhentai.com"
+        "http://localhost"
     ]
 }

@@ -6,6 +6,22 @@ Route::get('/', function () {
     return redirect('/home');
 });
 
+// Test route for site configuration
+Route::get('/test-config', function () {
+    $cdn = \Illuminate\Support\Facades\Storage::disk(getstoragedisk());
+    return view('test-config', [
+        'title' => 'Site Config Test',
+        'description' => 'Testing site configuration',
+        'cdn' => $cdn,
+        'ads' => [],
+        'country' => 'VN',
+        'is_mobile' => false,
+        'nsfw' => false,
+        'popup' => ''
+    ]);
+});
+
+
 Route::pattern('page', '[0-9]+');
 
 Route::get('translations/{lang}.json', 'TranslationController@generate');
@@ -23,6 +39,6 @@ Route::group(['prefix' => '{language}'], function () {
     Route::get('sitemap/relationships/{page}.xml', 'SitemapController@relationships')->name('sitemap.relationships');
 });
 Route::get('g/{id}', 'ComicController@redirect')->name('comic.short_url');
-Route::get('{locale}/'.(in_array('webtoons', config('site.features')) ? 'webtoon' : 'comic').'/{slug}/{any?}', 'IndexController')->name('comic')->where('any', '.*');
+Route::get('{locale}/' . (in_array('webtoons', config('site.features')) ? 'webtoon' : 'comic') . '/{slug}/{any?}', 'IndexController')->name('comic')->where('any', '.*');
 Route::get('{locale}/tag/{slug}/{any?}', 'IndexController')->name('tag')->where('any', '.*');
 Route::get('/{any}', 'IndexController')->where('any', '.*');

@@ -21,7 +21,8 @@
             captcha: "{{ config('site.captcha.key') }}",
             country: "{{ $country }}",
             is_mobile: @json($is_mobile),
-            nsfw: @json($nsfw)
+            nsfw: @json($nsfw),
+            site: @json(config('site'))
         };
     </script>
 </head>

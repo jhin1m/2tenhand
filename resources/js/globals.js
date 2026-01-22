@@ -78,7 +78,8 @@ Vue.mixin({
     },
 });
 
-Vue.prototype.$site = require('./site.json');
+// Use site config from backend (passed via index.blade.php) with fallback to site.json
+Vue.prototype.$site = (typeof app !== 'undefined' && app.site) ? app.site : require('./site.json');
 Vue.prototype.$api = api;
 Vue.prototype.$app = app;
 Vue.prototype.$bootstrap = bootstrap;
