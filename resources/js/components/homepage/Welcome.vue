@@ -1,194 +1,171 @@
 <template>
-  <div id="home">
-    <!-- Top Hero Section -->
-    <div class="hero-section text-white d-flex align-items-center justify-content-center">
-      <div class="hero-overlay"></div>
-      <div class="container position-relative z-index-1">
-        <div class="hero-content text-center py-5">
-          <h1 class="hero-title mb-3 animate-fade-in">
-            <span class="text-primary">{{ $site.name }}</span>
-          </h1>
-          <p class="hero-subtitle mb-4 animate-fade-in-delay">
-            Thư viện truyện tranh trực tuyến lớn nhất Việt Nam
-          </p>
+  <div class="welcome-container">
+    <!-- Hero Section -->
+    <div class="jumbotron jumbotron-fluid bg-transparent text-white mb-0 position-relative hero-section">
+      <div class="hero-bg-overlay"></div>
+      <div class="container position-relative z-1 text-center py-5">
+        <h1 class="display-3 font-weight-bold mb-3">
+          {{ $t('app.welcome_title', { name: $site.name }) || `Read Manga Online` }}
+          <span class="text-primary">For Free</span>
+        </h1>
+        <p class="lead mb-4 text-white-50 mx-auto" style="max-width: 700px;">
+          Khám phá thế giới manga đầy màu sắc. Cập nhật hàng giờ, không quảng cáo phiền hà.
+        </p>
 
-          <!-- Search Bar -->
-          <div id="xsearch" class="search-container mx-auto mb-4 animate-fade-in-delay">
-            <form action="/latest?q=" method="get" autocomplete="off" id="search-home-form" class="d-flex w-100">
-              <div class="input-group shadow-lg overflow-hidden rounded-pill border-0">
-                <input type="text" name="q"
-                  class="form-control form-control-lg border-0 px-4 py-3 bg-dark-input text-white"
-                  placeholder="Tìm kiếm truyện, tác giả..." required />
-                <div class="input-group-append">
-                  <button class="btn btn-primary px-4 border-0" type="submit">
-                    <search-icon />
-                  </button>
-                </div>
-              </div>
+        <!-- Search Bar -->
+        <div class="row justify-content-center mb-5">
+          <div class="col-md-8 col-lg-6">
+            <form action="/latest?q=" method="get" class="search-form position-relative">
+              <input type="text" name="q"
+                class="form-control form-control-lg rounded-pill border-0 pl-5 bg-dark-transparent text-white shadow-lg"
+                placeholder="Tìm kiếm manga..." required />
+              <span class="search-icon-wrapper position-absolute">
+                <search-icon class="text-muted" />
+              </span>
             </form>
           </div>
+        </div>
 
-          <div class="d-flex justify-content-center animate-fade-in-delay-2">
-            <router-link :to="{ name: 'comics' }" class="btn btn-outline-light rounded-pill px-4 mr-3">
-              <book-open-icon size="1.2x" class="mr-2" /> Tất cả truyện
-            </router-link>
-            <router-link :to="{ name: 'comics', query: { sort: 'latest' } }" class="btn btn-primary rounded-pill px-4">
-              Mới cập nhật <arrow-right-icon size="1.2x" class="ml-2" />
-            </router-link>
-          </div>
+        <!-- CTA Buttons -->
+        <div class="d-flex justify-content-center gap-3">
+          <router-link :to="{ name: 'comics' }"
+            class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm d-flex align-items-center">
+            <span>Khám phá ngay</span> <arrow-right-icon class="ml-2" />
+          </router-link>
         </div>
       </div>
     </div>
 
-    <!-- Content Section -->
-    <div class="content-section bg-dark-base py-5">
+    <!-- Features Section -->
+    <div class="features-section py-5">
       <div class="container">
-
-        <!-- Popular Comics -->
-        <div class="section-wrapper mb-5 animate-up">
-          <popular-comics />
+        <div class="text-center mb-5">
+          <h2 class="font-weight-bold text-white">Tại sao chọn <span class="text-primary">{{ $site.name }}</span>?</h2>
         </div>
 
-        <!-- Latest Updates -->
-        <div class="section-wrapper mb-5 animate-up delay-1">
-          <latest-updates />
-        </div>
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div class="card bg-dark border-0 h-100 shadow-sm feature-card">
+              <div class="card-body text-center p-4">
+                <div
+                  class="feature-icon mb-3 text-warning bg-warning-soft mx-auto rounded-circle d-flex align-items-center justify-content-center">
+                  <lock-icon size="2x" />
+                </div>
+                <h4 class="text-white font-weight-bold">An toàn tuyệt đối</h4>
+                <p class="card-text text-white-50">Không virus, không malware. Đọc truyện an tâm mọi lúc.</p>
+              </div>
+            </div>
+          </div>
 
-        <!-- Features Scale Down -->
-        <div class="row text-center g-4 py-4 border-top border-gray-dark">
-          <div class="col-md-4">
-            <div class="p-3">
-              <h3 class="h5 mb-2 text-warning"><i class="fas fa-bolt mr-2"></i>Cập nhật nhanh</h3>
-              <p class="text-muted small mb-0">Chương mới được cập nhật liên tục mỗi giờ.</p>
+          <div class="col-md-4 mb-4">
+            <div class="card bg-dark border-0 h-100 shadow-sm feature-card">
+              <div class="card-body text-center p-4">
+                <div
+                  class="feature-icon mb-3 text-primary bg-primary-soft mx-auto rounded-circle d-flex align-items-center justify-content-center">
+                  <zap-icon size="2x" />
+                </div>
+                <h4 class="text-white font-weight-bold">Cập nhật nhanh</h4>
+                <p class="card-text text-white-50">Chương mới được cập nhật liên tục hàng giờ với chất lượng cao.</p>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="p-3">
-              <h3 class="h5 mb-2 text-primary"><i class="fas fa-gem mr-2"></i>Chất lượng cao</h3>
-              <p class="text-muted small mb-0">Ảnh đẹp, load nhanh, không quảng cáo khó chịu.</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="p-3">
-              <h3 class="h5 mb-2 text-success"><i class="fas fa-check-circle mr-2"></i>Miễn phí 100%</h3>
-              <p class="text-muted small mb-0">Đọc truyện thả ga không lo về giá.</p>
+
+          <div class="col-md-4 mb-4">
+            <div class="card bg-dark border-0 h-100 shadow-sm feature-card">
+              <div class="card-body text-center p-4">
+                <div
+                  class="feature-icon mb-3 text-success bg-success-soft mx-auto rounded-circle d-flex align-items-center justify-content-center">
+                  <heart-icon size="2x" />
+                </div>
+                <h4 class="text-white font-weight-bold">Hoàn toàn miễn phí</h4>
+                <p class="card-text text-white-50">Không cần đăng ký, không cần trả phí. Đọc truyện thả ga.</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- SEO Content Section (Hidden visually but kept for SEO if needed, or structured better) -->
-    <div class="seo-content py-4 bg-black-darker border-top border-gray-dark">
-      <div class="container text-center">
-        <h2 class="h6 text-muted mb-3">{{ $site.name }} - Nền tảng đọc truyện tranh online hàng đầu</h2>
-        <p class="text-muted small mb-0 w-75 mx-auto">
-          Cổng truyện tranh đa dạng thể loại: Manga, Manhua, Manhwa. Giao diện tối ưu trải nghiệm người dùng trên mọi
-          thiết bị.
-        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import PopularComics from './PopularComics.vue';
-import LatestUpdates from './LatestUpdates.vue';
-
 export default {
-  name: "HomePage",
-  components: {
-    PopularComics,
-    LatestUpdates
-  }
-};
+  name: 'Welcome',
+}
 </script>
 
 <style scoped>
-/* Theme Colors & Variables */
-.bg-dark-base {
-  background-color: #1a191e;
-}
-
-.bg-black-darker {
-  background-color: #151419;
-}
-
-.bg-dark-input {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  backdrop-filter: blur(10px);
-}
-
-.bg-dark-input:focus {
-  background-color: rgba(255, 255, 255, 0.15);
-  box-shadow: none;
-}
-
-.bg-dark-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.border-gray-dark {
-  border-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-/* Hero Section */
 .hero-section {
-  position: relative;
-  min-height: 55vh;
-  background: radial-gradient(circle at top right, #2d2a35 0%, #1a191e 100%);
-  overflow: hidden;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  background: url('/images/landing/home.jpeg') center/cover no-repeat;
 }
 
-.hero-overlay {
+.hero-bg-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-image:
-    linear-gradient(to bottom, rgba(26, 25, 30, 0.3), #1a191e),
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(30, 30, 40, 0.7) 0%, rgba(30, 30, 40, 0.95) 100%);
+  pointer-events: none;
 }
 
-.hero-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  letter-spacing: -1px;
+.bg-dark-transparent {
+  background-color: rgba(30, 30, 40, 0.6) !important;
+  backdrop-filter: blur(10px);
 }
 
-.hero-subtitle {
-  font-size: 1.25rem;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
+.bg-dark-transparent:focus {
+  background-color: rgba(30, 30, 40, 0.8) !important;
+  box-shadow: 0 0 0 0.2rem rgba(118, 75, 162, 0.25);
 }
 
-.search-container {
-  max-width: 600px;
+.search-form .form-control-lg {
+  height: 3.5rem;
+  font-size: 1.1rem;
+}
+
+.search-icon-wrapper {
+  top: 50%;
+  left: 1.5rem;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+.gap-3 {
+  gap: 1rem;
+}
+
+.feature-icon {
+  width: 70px;
+  height: 70px;
+}
+
+.bg-warning-soft {
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+.bg-primary-soft {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.bg-success-soft {
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.feature-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #2b2b35 !important;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
 }
 
 /* Animations */
-.animate-fade-in {
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.animate-fade-in-delay {
-  animation: fadeInUp 0.8s ease-out 0.2s both;
-}
-
-.animate-fade-in-delay-2 {
-  animation: fadeInUp 0.8s ease-out 0.4s both;
-}
-
-.animate-up {
-  animation: slideUp 0.8s ease-out both;
-}
-
-.delay-1 {
-  animation-delay: 0.2s;
-}
-
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -201,30 +178,19 @@ export default {
   }
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.hero-section h1 {
+  animation: fadeInUp 0.8s ease-out;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .hero-section {
-    min-height: 45vh;
-  }
+.hero-section p {
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
 
-  .hero-title {
-    font-size: 2.2rem;
-  }
+.search-form {
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
 
-  .hero-subtitle {
-    font-size: 1rem;
-  }
+.btn-cta {
+  animation: fadeInUp 0.8s ease-out 0.6s both;
 }
 </style>

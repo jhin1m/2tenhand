@@ -33,7 +33,7 @@ class ComicController extends Controller
             } elseif ($request->sort == 'popularity') {
                 $duration = (in_array($request->duration, ['day', 'week', 'month', 'year', 'all']) ? $request->duration : 'day');
                 if ($duration != 'all')
-                    $comics->whereDate(config('site.id') !== 'readmanhwa' ? 'uploaded_at' : 'updated_at', '>=', date("Y-m-d", strtotime(($duration === 'day' ? '-2' : '-1') . " $duration")));
+                    $comics->whereDate('uploaded_at', '>=', date("Y-m-d", strtotime(($duration === 'day' ? '-2' : '-1') . " $duration")));
                 $comics->orderBy('visits', $order);
             }
         }

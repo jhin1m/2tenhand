@@ -1,5 +1,6 @@
 <template>
-    <router-link :to="{name: 'home'}" :class="{ 'brand-font': !$site.features.includes('logo'), 'navbar-brand': placement === 'header' || $site.features.includes('logo') }">
+    <router-link :to="{ name: 'comics', query: { sort: 'latest' } }"
+        :class="{ 'brand-font': !$site.features.includes('logo'), 'navbar-brand': placement === 'header' || $site.features.includes('logo') }">
         <img v-if="$site.features.includes('logo') && showName" :src="$cdn('/images/logo.png')" :alt="$t('app.name')">
         <img v-else-if="$site.features.includes('logo')" :src="$cdn('/images/icon.png')" :alt="$t('app.name')">
         <template v-else>
@@ -10,7 +11,7 @@
 </template>
 
 <script>
-    export default {
-        props: ["placement", "showName"],
-    }
+export default {
+    props: ["placement", "showName"],
+}
 </script>

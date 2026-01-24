@@ -8,8 +8,9 @@
                     <logo class="order-1" placement="header" showName="true" />
                     <div class="navbar-nav collapse navbar-collapse flex-grow-0 order-3 order-lg-2" id="navbar">
                         <router-link :to="{ name: 'home' }" class="nav-item nav-link"><home-icon /> {{ $t("app.home")
-                            }}</router-link>
-                        <router-link :to="{ name: 'comics' }" class="nav-item nav-link"><grid-icon /> {{ $t("app.comics")
+                        }}</router-link>
+                        <router-link :to="{ name: 'comics' }" class="nav-item nav-link"><grid-icon /> {{
+                            $t("app.comics")
                             }}</router-link>
                         <router-link v-if="$site.features.includes('tags')" :to="{ name: 'tags' }"
                             class="nav-item nav-link"><tag-icon /> {{ $t("app.tags") }}</router-link>
@@ -23,7 +24,7 @@
                             class="nav-item nav-link"><image-icon /> {{ $t("app.artists") }}</router-link>
                         <router-link v-if="$site.features.includes('authors')" :to="{ name: 'authors' }"
                             class="nav-item nav-link"><book-open-icon /> {{ $t("app.authors") }}</router-link>
-                        <!-- <a v-if="$site.id === 'Manga-Web'" href="https://Manga-Web.com/" class="nav-item nav-link" target="_blank">Manga-Web App</a> -->
+
                     </div>
                     <div class="navbar-nav flex-row order-2 order-lg-3">
                         <a href="#navbar" class="nav-item nav-link d-lg-none" data-toggle="collapse"
@@ -56,14 +57,14 @@
                                             class="dropdown-item"><message-square-icon /> Comments</router-link>
                                         <router-link v-if="$site.features.includes('artists')"
                                             :to="{ name: 'admin/artists' }" class="dropdown-item"><image-icon /> {{
-                                            $t("admin.artists") }}</router-link>
+                                                $t("admin.artists") }}</router-link>
                                         <router-link v-if="$site.features.includes('authors')"
                                             :to="{ name: 'admin/authors' }" class="dropdown-item"><book-open-icon /> {{
-                                            $t("admin.authors") }}</router-link>
+                                                $t("admin.authors") }}</router-link>
                                     </template>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" @click="logout"><log-out-icon /> {{ $t("auth.logout")
-                                        }}</a>
+                                    }}</a>
                                 </div>
                             </div>
                         </template>
@@ -76,10 +77,10 @@
                 </div>
             </transition>
         </nav>
-        <main class="py-4">
-            <ad-spot class="mb-4" spot="top" />
+        <main :class="{ 'py-4': $route.name !== 'home' }">
+            <ad-spot v-if="$route.name !== 'home'" class="mb-4" spot="top" />
             <router-view />
-            <ad-spot class="mt-4" spot="bottom" />
+            <ad-spot v-if="$route.name !== 'home'" class="mt-4" spot="bottom" />
             <auth-modal ref="authModal" />
             <search-modal ref="searchModal" />
         </main>
@@ -91,7 +92,7 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item" v-for="(language, i) in languages" :key="`language${i}`"
                             @click="changeLanguage(i)"><img class="language-flag" :src="$cdn(language.icon)">{{
-                            language.name
+                                language.name
                             }}</a>
                     </div>
                 </div>

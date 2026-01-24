@@ -64,6 +64,7 @@ return [
         "download_text" => "Click on the button below to start downloading your comic, the comic images will be ordered by their page number inside a compressed .ZIP file.",
         "premium" => "You must be logged in to read this premium comic.",
         "favorite" => "Favorite",
+        "favorited" => "UnFavorite",
         "category" => "Category",
         "artists" => "Artists",
         "authors" => "Authors",
@@ -72,6 +73,7 @@ return [
         "status" => "Status",
         "groups" => "Groups",
         "parodies" => "Parodies",
+        "pages" => "Pages",
         "relationships" => "Relationships",
         "gallery" => "Gallery",
         "chapters" => "Chapters",
@@ -181,7 +183,7 @@ return [
             'all' => 'All time',
         ]
     ],
-    
+
     'attributes' => [
         'speechless' => 'Speechless',
         'rewritten' => 'Rewritten',
