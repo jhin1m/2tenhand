@@ -10,27 +10,33 @@ class TagController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:api','admin'])->except(['index','show']);
+        $this->middleware(['auth:api', 'admin'])->except(['index', 'show']);
     }
 
     public function index(Request $request)
     {
         $tags = Tag::query();
         if ($request->has('with') && $request->with = 'comics') {
-            $tags->with(['comics' => function($query) {
-                $query->limit(8);
-            }]);
+            $tags->with([
+                'comics' => function ($query) {
+                    $query->limit(8);
+                }
+            ]);
         }
-        if ($request->has('landing')) $tags->orderByRaw("field(slug, 'uncensored') desc");
+        if ($request->has('landing'))
+            $tags->orderByRaw("field(slug, 'uncensored') desc");
         if ($request->has('sort')) {
             $tags->orderBy(
-                (in_array($request->sort,
-                ['name', 'comics_count']) ? $request->sort : 'id'),
+                (in_array(
+                    $request->sort,
+                    ['name', 'comics_count']
+                ) ? $request->sort : 'id'),
                 (in_array($request->order, ['desc', 'asc']) ? $request->order : 'desc')
             );
         }
-        if ($request->filled('q')) $tags->where('name', 'LIKE', '%'.$request->q.'%')->orWhere('description', 'LIKE', '%'.$request->q.'%');
-        $limit = (($request->per_page > 0 && $request->per_page < 100) ? $request->per_page : 5);
+        if ($request->filled('q'))
+            $tags->where('name', 'LIKE', '%' . $request->q . '%')->orWhere('description', 'LIKE', '%' . $request->q . '%');
+        $limit = (($request->per_page > 0) ? $request->per_page : 5);
         if ($request->has('discover'))
             return $tags->random($limit)->limit($limit)->get();
         return $tags->paginate($limit);
