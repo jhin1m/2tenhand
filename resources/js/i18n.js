@@ -2,7 +2,8 @@ import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import api from './api';
 import en from './translations/en.json';
-import ja from './translations/ja.json';  // Import Japanese translations
+import ja from './translations/ja.json';
+import vi from './translations/vi.json';
 
 Vue.use(VueI18n);
 
@@ -14,7 +15,8 @@ export const i18n = new VueI18n({
     fallbackLocale: 'en',
     messages: {
         en,
-        ja,  // Add Japanese messages
+        ja,
+        vi,
     },
 });
 

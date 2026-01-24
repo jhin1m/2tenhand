@@ -116,6 +116,10 @@ return [
         'ja' => [
             'icon' => "/images/flags/jp.svg",
             'name' => "Japanese"
+        ],
+        'vi' => [
+            'icon' => "/images/flags/vn.svg",
+            'name' => "Vietnamese"
         ]
     ],
 

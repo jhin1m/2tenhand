@@ -4,12 +4,10 @@
     <div class="jumbotron jumbotron-fluid bg-transparent text-white mb-0 position-relative hero-section">
       <div class="hero-bg-overlay"></div>
       <div class="container position-relative z-1 text-center py-5">
-        <h1 class="display-3 font-weight-bold mb-3">
-          {{ $t('app.welcome_title', { name: $site.name }) || `Read Manga Online` }}
-          <span class="text-primary">For Free</span>
+        <h1 class="display-3 font-weight-bold mb-3" v-html="$t('app.welcome_title', { name: $site.name })">
         </h1>
         <p class="lead mb-4 text-white-50 mx-auto" style="max-width: 700px;">
-          Khám phá thế giới manga đầy màu sắc. Cập nhật hàng giờ, không quảng cáo phiền hà.
+          {{ $t('app.welcome.subtitle') }}
         </p>
 
         <!-- Search Bar -->
@@ -17,8 +15,8 @@
           <div class="col-md-8 col-lg-6">
             <form action="/latest?q=" method="get" class="search-form position-relative">
               <input type="text" name="q"
-                class="form-control form-control-lg rounded-pill border-0 pl-5 bg-dark-transparent text-white shadow-lg"
-                placeholder="Tìm kiếm manga..." required />
+                class="form-control form-control-lg rounded-pill pl-5 bg-dark-transparent text-white shadow-lg"
+                :placeholder="$t('app.welcome.search_placeholder')" required />
               <span class="search-icon-wrapper position-absolute">
                 <search-icon class="text-muted" />
               </span>
@@ -30,7 +28,7 @@
         <div class="d-flex justify-content-center gap-3">
           <router-link :to="{ name: 'comics' }"
             class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm d-flex align-items-center">
-            <span>Khám phá ngay</span> <arrow-right-icon class="ml-2" />
+            <span>{{ $t('app.welcome.cta_button') }}</span> <arrow-right-icon class="ml-2" />
           </router-link>
         </div>
       </div>
@@ -40,7 +38,8 @@
     <div class="features-section py-5">
       <div class="container">
         <div class="text-center mb-5">
-          <h2 class="font-weight-bold text-white">Tại sao chọn <span class="text-primary">{{ $site.name }}</span>?</h2>
+          <h2 class="font-weight-bold text-white"
+            v-html="$t('app.welcome.why_choose', { name: `<span class='text-primary'>${$site.name}</span>` })"></h2>
         </div>
 
         <div class="row">
@@ -51,8 +50,8 @@
                   class="feature-icon mb-3 text-warning bg-warning-soft mx-auto rounded-circle d-flex align-items-center justify-content-center">
                   <lock-icon size="2x" />
                 </div>
-                <h4 class="text-white font-weight-bold">An toàn tuyệt đối</h4>
-                <p class="card-text text-white-50">Không virus, không malware. Đọc truyện an tâm mọi lúc.</p>
+                <h4 class="text-white font-weight-bold">{{ $t('app.welcome.features.safe_title') }}</h4>
+                <p class="card-text text-white-50">{{ $t('app.welcome.features.safe_desc') }}</p>
               </div>
             </div>
           </div>
@@ -64,8 +63,8 @@
                   class="feature-icon mb-3 text-primary bg-primary-soft mx-auto rounded-circle d-flex align-items-center justify-content-center">
                   <zap-icon size="2x" />
                 </div>
-                <h4 class="text-white font-weight-bold">Cập nhật nhanh</h4>
-                <p class="card-text text-white-50">Chương mới được cập nhật liên tục hàng giờ với chất lượng cao.</p>
+                <h4 class="text-white font-weight-bold">{{ $t('app.welcome.features.update_title') }}</h4>
+                <p class="card-text text-white-50">{{ $t('app.welcome.features.update_desc') }}</p>
               </div>
             </div>
           </div>
@@ -77,8 +76,8 @@
                   class="feature-icon mb-3 text-success bg-success-soft mx-auto rounded-circle d-flex align-items-center justify-content-center">
                   <heart-icon size="2x" />
                 </div>
-                <h4 class="text-white font-weight-bold">Hoàn toàn miễn phí</h4>
-                <p class="card-text text-white-50">Không cần đăng ký, không cần trả phí. Đọc truyện thả ga.</p>
+                <h4 class="text-white font-weight-bold">{{ $t('app.welcome.features.free_title') }}</h4>
+                <p class="card-text text-white-50">{{ $t('app.welcome.features.free_desc') }}</p>
               </div>
             </div>
           </div>
@@ -96,7 +95,7 @@ export default {
 
 <style scoped>
 .hero-section {
-  min-height: 70vh;
+  min-height: 55vh;
   display: flex;
   align-items: center;
   background: url('/images/landing/home.jpeg') center/cover no-repeat;
@@ -115,11 +114,13 @@ export default {
 .bg-dark-transparent {
   background-color: rgba(30, 30, 40, 0.6) !important;
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 .bg-dark-transparent:focus {
   background-color: rgba(30, 30, 40, 0.8) !important;
-  box-shadow: 0 0 0 0.2rem rgba(118, 75, 162, 0.25);
+  border-color: #764ba2 !important;
+  box-shadow: 0 0 0 0.2rem rgba(118, 75, 162, 0.25) !important;
 }
 
 .search-form .form-control-lg {
