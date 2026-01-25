@@ -49,8 +49,8 @@ export default {
             }
         }).then(response => {
             this.$meta({
-                title: this.$t('meta.title.default'),
-                description: this.$t('meta.description.default')
+                title: this.$t('meta.title.default', { name: this.$site.name }),
+                description: this.$t('meta.description.default', { site_name: this.$site.name })
             });
             this.tags = response.data.data;
             this.status.tags = "done";
