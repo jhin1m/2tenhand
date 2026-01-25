@@ -15,7 +15,7 @@
             <div class="box mb-4 p-3">
                 <div class="row">
                     <!-- Left Column: Cover Image -->
-                    <div class="col-12 col-md-4 col-lg-3 text-center text-md-left">
+                    <div class="col-12 col-md-4 col-lg-4 text-center text-md-left">
                         <div class="comic-image mb-3">
                             <router-link
                                 :to="{ name: 'comic/reader', params: { slug: comic.slug, chapter: comic.first_chapter ? comic.first_chapter.slug : undefined } }">
@@ -26,7 +26,7 @@
                     </div>
 
                     <!-- Right Column: Info & Metadata -->
-                    <div class="col-12 col-md-8 col-lg-9">
+                    <div class="col-12 col-md-8 col-lg-8">
                         <div class="comic-info">
                             <h1 class="comic-title font-weight-bold mb-1">{{ comic.title }}</h1>
                             <h4 class="comic-alternative-title text-muted mb-3" v-if="comic.alternative_title">{{
@@ -73,7 +73,7 @@
                                             {{ tag.name }}
                                             <span class="badge badge-light ml-1" v-if="tag.comics_count">{{
                                                 tag.comics_count
-                                                }}</span>
+                                            }}</span>
                                         </router-link>
                                     </span>
                                 </div>
