@@ -2,7 +2,7 @@
 
 namespace App\Scrapers;
 
-class ManhwaClub extends Madara
+class Manhwaclub extends Madara
 {
     public $domain = "manhwahentai.to";
 }

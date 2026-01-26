@@ -18,7 +18,7 @@ GROUP BY status;
 # Ví dụ với Nhentai
 php artisan comic:add https://nhentai.net/g/123456
 
-# Ví dụ với HentaiHand
+# Ví dụ với Hentaihand
 php artisan comic:add https://hentaihand.com/en/12345
 ```
 
@@ -31,10 +31,10 @@ php artisan comics:add
 php artisan comics:add --all
 ```
 
-### Test ngay với HentaiHand
+### Test ngay với Hentaihand
 
 ```bash
-# Bước 1: Thêm scraper HentaiHand vào config
+# Bước 1: Thêm scraper Hentaihand vào config
 # Sửa file .env:
 SITE_SCRAPERS=hentaihand
 
@@ -72,7 +72,7 @@ php artisan comic:add [URL]
 ```bash
 # FIX: Scraper chưa tồn tại hoặc tên sai
 # Kiểm tra file scraper có tồn tại không:
-ls app/Scrapers/HentaiHand.php
+ls app/Scrapers/Hentaihand.php
 
 # Kiểm tra tên class trong file phải khớp với tên file
 ```

@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
 
-class HentaiCafe extends Scraper
+class Hentaicafe extends Scraper
 {
     public function getPageCount()
     {
@@ -32,27 +32,35 @@ class HentaiCafe extends Scraper
         $crawler = $this->client->request('GET', $link);
         $comic = [];
         $cover = $crawler->filter('.content > .x-column')->first();
-        if ($cover->filter('a')->count()) $comic['cover'] = $cover->filter('a')->link()->getUri();
-        else $comic['cover'] = $this->wpImage($cover->filter('img')->image()->getUri());
+        if ($cover->filter('a')->count())
+            $comic['cover'] = $cover->filter('a')->link()->getUri();
+        else
+            $comic['cover'] = $this->wpImage($cover->filter('img')->image()->getUri());
         $comic['title'] = $crawler->filter('.content > .last')->filter('h3')->text(true);
         $comic['slug'] = $this->slug($comic['title']);
-        $tags = [[
-            'name' => 'Premium',
-            'slug' => 'premium',
-            'color' => '#ffbf00'
-        ], [
-            'name' => 'Uncensored',
-            'slug' => 'uncensored'
-        ], [
-            'name' => 'Fakku',
-            'slug' => 'fakku'
-        ]];
+        $tags = [
+            [
+                'name' => 'Premium',
+                'slug' => 'premium',
+                'color' => '#ffbf00'
+            ],
+            [
+                'name' => 'Uncensored',
+                'slug' => 'uncensored'
+            ],
+            [
+                'name' => 'Fakku',
+                'slug' => 'fakku'
+            ]
+        ];
         $artists = [];
         $crawler->filter('.content > .last > p a[rel=tag]')->each(function ($node) use (&$tags, &$artists) {
             $link = $node->link()->getUri();
             $tag = $this->processTag($node);
-            if (Str::contains($link, 'tag')) $tags[] = $tag;
-            else if (Str::contains($link, 'artist')) $artists[] = $tag;
+            if (Str::contains($link, 'tag'))
+                $tags[] = $tag;
+            else if (Str::contains($link, 'artist'))
+                $artists[] = $tag;
         });
         $comic['tags'] = $tags;
         $comic['artists'] = $artists;
@@ -73,7 +81,8 @@ class HentaiCafe extends Scraper
         return $comic;
     }
 
-    public function processTag($node, $array = []) {
+    public function processTag($node, $array = [])
+    {
         $value = $node->text(true);
         $array['name'] = Str::title($value);
         $array['slug'] = $this->slug($array['name']);

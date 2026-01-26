@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
-class HentaiHand extends Scraper
+class Hentaihand extends Scraper
 {
     private $apiBase = 'https://hentaihand.com/api';
 
