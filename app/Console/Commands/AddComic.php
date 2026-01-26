@@ -30,11 +30,14 @@ class AddComic extends Command
 {
     protected $signature = 'comic:add {link} {--scraper= : Scraper to use (e.g., hentaihand, nhentai)}';
 
-    protected $description = 'Add a comic to the database';
+    protected $description = 'Add comics to the database';
+    protected $scraper;
 
     public $comic;
     private $relationships;
     private $maxConcurrent = 100;
+    protected $queue;
+    protected $downloaded;
 
     public function handle(Scraper $scraper)
     {
