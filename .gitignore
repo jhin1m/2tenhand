@@ -24,3 +24,5 @@ Homestead.json
 .phpunit.result.cache
 .DS_Store
 config/proxies.json
+resources/js/translations/*.json
+resources/js/site.json
