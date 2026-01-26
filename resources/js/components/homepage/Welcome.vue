@@ -4,7 +4,7 @@
     <div class="jumbotron jumbotron-fluid bg-transparent text-white mb-0 position-relative hero-section">
       <div class="hero-bg-overlay"></div>
       <div class="container position-relative z-1 text-center py-5">
-        <h1 class="display-3 font-weight-bold mb-3" v-html="$t('app.welcome_title', { name: $site.name })">
+        <h1 class="display-3 font-weight-bold mb-3" v-html="$t('app.welcome.title', { name: $site.name })">
         </h1>
         <p class="lead mb-4 text-white-50 mx-auto" style="max-width: 700px;">
           {{ $t('app.welcome.subtitle') }}

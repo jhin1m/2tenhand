@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueAnalytics, { page } from 'vue-analytics'
 import Multiselect from 'vue-multiselect';
 import VueLazyload from 'vue-lazyload'
-import * as bootstrap from './bootstrap';
+import bootstrap from './bootstrap';
 import api from './api';
 import router from './router';
 import Logo from './components/Logo';
