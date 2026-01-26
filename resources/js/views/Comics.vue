@@ -1,5 +1,28 @@
 <template>
     <div class="container">
+        <div class="box filters mb-3 p-3">
+            <div class="d-flex flex-wrap align-items-center mb-2" v-if="quickLanguages.length">
+                <strong class="mr-3">{{ $t('app.filters.languages') | capitalize }}:</strong>
+                <button v-for="lang in quickLanguages" :key="lang.id" class="btn btn-sm mr-2 mb-1"
+                    :class="isLanguageSelected(lang.id) ? 'btn-primary' : 'btn-outline-primary'"
+                    @click="toggleQuickLanguage(lang)">
+                    <span v-if="lang.name === 'Chinese'">🇨🇳</span>
+                    <span v-else-if="lang.name === 'Japanese'">🇯🇵</span>
+                    <span v-else-if="lang.name === 'English'">🇺🇸</span>
+                    {{ lang.name }}
+                </button>
+            </div>
+            <div class="d-flex flex-wrap align-items-center" v-if="popularTags.length">
+                <strong class="mr-3">{{ $t('app.filters.tags') | capitalize }}:</strong>
+                <span v-for="tag in popularTags" :key="tag.id" class="badge mr-2 mb-1 cursor-pointer border" :style="{
+                    backgroundColor: isTagSelected(tag.id) ? (tag.color || '#007bff') : '#292929',
+                    color: isTagSelected(tag.id) ? 'white' : (tag.color || '#ccc'),
+                    borderColor: tag.color || '#444'
+                }" style="font-size: 90%; padding: 8px 12px; cursor: pointer;" @click="toggleQuickTag(tag)">
+                    {{ tag.name }}
+                </span>
+            </div>
+        </div>
         <div class="box filters d-flex justify-content-between">
             <h6 class="align-self-center my-0 mx-1"><grid-icon /> {{ $t('app.comics') }}</h6>
             <div>
@@ -35,6 +58,8 @@
                 </div>
             </div>
         </div>
+
+
         <div class="collapse" id="filter">
             <div class="box filters d-flex flex-column mt-3">
                 <div class="w-100">
@@ -246,6 +271,8 @@ export default {
                 parodies: [],
                 languages: []
             },
+            quickLanguages: [],
+            popularTags: [],
             lists: {
                 categories: [],
                 artists: [],
@@ -287,6 +314,7 @@ export default {
     },
     mounted() {
         this.verifyFilters();
+        this.fetchQuickData();
         this.get();
         this.$meta({
             title: this.$t('meta.title.comics'),
@@ -395,6 +423,52 @@ export default {
         paginate() {
             this.$router.replace({ query: { page: this.pagination.current_page } });
             this.get();
+        },
+        fetchQuickData() {
+            // Fetch Languages
+            const langs = ['Chinese', 'Japanese', 'English'];
+            langs.forEach(langName => {
+                this.$api.get('languages?q=' + langName).then(response => {
+                    if (response.data.data.length > 0) {
+                        // Try to find exact match
+                        let match = response.data.data.find(l => l.name.toLowerCase() === langName.toLowerCase());
+                        // If not exact, take first logic if reasonable, or skip
+                        if (match) {
+                            // Check if already added to avoid duplicates
+                            if (!this.quickLanguages.find(q => q.id === match.id)) {
+                                this.quickLanguages.push(match);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Fetch Popular Tags
+            this.$api.get('tags?sort=comics_count&order=desc&per_page=20').then(response => {
+                this.popularTags = response.data.data;
+            });
+        },
+        isLanguageSelected(id) {
+            return this.filters.languages && this.filters.languages.some(i => i == id);
+        },
+        toggleQuickLanguage(lang) {
+            let current = this.languagesModel;
+            if (current.find(l => l.id === lang.id)) {
+                this.languagesModel = current.filter(l => l.id !== lang.id);
+            } else {
+                this.languagesModel = [...current, lang];
+            }
+        },
+        isTagSelected(id) {
+            return this.filters.tags && this.filters.tags.some(i => i == id);
+        },
+        toggleQuickTag(tag) {
+            let current = this.tagsModel;
+            if (current.find(t => t.id === tag.id)) {
+                this.tagsModel = current.filter(t => t.id !== tag.id);
+            } else {
+                this.tagsModel = [...current, tag];
+            }
         }
     }
 };

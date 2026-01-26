@@ -26,6 +26,9 @@ class TagController extends Controller
         if ($request->has('landing'))
             $tags->orderByRaw("field(slug, 'uncensored') desc");
         if ($request->has('sort')) {
+            if ($request->sort == 'comics_count') {
+                $tags->withCount('comics');
+            }
             $tags->orderBy(
                 (in_array(
                     $request->sort,
