@@ -25,6 +25,22 @@ return [
     "platforms" => "Platforms",
     "no_results" => "No results match your search criteria, please try a different search.",
 
+    "welcome" => [
+        "title" => "Welcome to :name",
+        "subtitle" => "The best place to read completely free hentai manga and doujinshi without annoying ads.",
+        "search_placeholder" => "Search for artists, characters, tags...",
+        "cta_button" => "Start Reading",
+        "why_choose" => "Why choose :name?",
+        "features" => [
+            "safe_title" => "Safe & Secure",
+            "safe_desc" => "No pop-up ads, no malware. We prioritize your viewing experience and security.",
+            "update_title" => "Daily Updates",
+            "update_desc" => "New chapters and comics added every day. You'll never run out of content.",
+            "free_title" => "Always Free",
+            "free_desc" => "Enjoy unlimited access to our library without paying a dime. Registration is optional."
+        ]
+    ],
+
     "homepage" => [
         "tags" => "Tags",
         "discover_comics" => "Discover comics",
