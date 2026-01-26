@@ -242,7 +242,14 @@ class AddComic extends Command
         foreach ($ordered as $chapter) {
             if (!$chapter['name'])
                 $chapter['name'] = Chapter::generate($chapter['meta'], $chapter['original']);
-            $chapter['slug'] = Chapter::slugify($chapter['name'], ['comic_id' => $comic->id]);
+            //$chapter['slug'] = Chapter::slugify($chapter['name'], ['comic_id' => $comic->id]);
+            $slug = $this->slugify($chapter['name']);
+            $originalSlug = $slug;
+            $counter = 1;
+            while ($comic->chapters()->where('slug', $slug)->exists()) {
+                $slug = $originalSlug . '-' . $counter++;
+            }
+            $chapter['slug'] = $slug;
             $this->line("\nAdding \"{$chapter['name']}\" ({$chapter['original']})");
             $result = $comic->chapters()->create($chapter);
             try {
@@ -322,7 +329,7 @@ class AddComic extends Command
             return !array_diff($array['tags'], data_get($tags, '*.slug'));
         })->pluck('relationships')->flatten()->unique()->all();
         return array_map(function ($relationship) {
-            return Relationship::firstOrCreate(['slug' => str::slug($relationship)], ['name' => $relationship])->id;
+            return Relationship::firstOrCreate(['slug' => $this->slugify($relationship)], ['name' => $relationship])->id;
         }, $relationships);
     }
 
@@ -436,9 +443,19 @@ class AddComic extends Command
         if ($this->relationships)
             return $this->relationships;
         return $this->relationships = collect(config('relationships'))->transform(function ($item, $key) {
-            $item['tags'] = array_map('str_slug', $item['tags']);
+            $item['tags'] = array_map([$this, 'slugify'], $item['tags']);
             return $item;
         });
+    }
+
+    public function slugify($text)
+    {
+        if (preg_match('/[\p{Han}\p{Hiragana}\p{Katakana}\x{AC00}-\x{D7AF}\x{1100}-\x{11FF}\x{3130}-\x{318F}]/u', $text)) {
+            $slug = preg_replace('/[^\p{L}\p{N}]+/u', '-', $text);
+            $slug = trim($slug, '-');
+            return mb_strtolower($slug, 'UTF-8');
+        }
+        return Str::slug($text);
     }
 
     public function fail($kill = true)
