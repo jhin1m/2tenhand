@@ -24,6 +24,9 @@ npm install
 cp .env.example .env
 php artisan key:generate
 
+# Cấu hình passport
+php artisan passport:install
+
 # Chạy migrations
 php artisan migrate
 
@@ -39,6 +42,10 @@ php artisan serve
 
 # Compile assets (terminal khác)
 npm run watch
+
+# Build assets
+
+npm run build
 ```
 
 ## Tính năng chính
